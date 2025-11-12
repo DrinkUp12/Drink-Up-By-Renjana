@@ -7,7 +7,7 @@
     <style>
         /*
          * TEMA: COFFEE & EARTH TONES (Hangat dan Lebih Cerah)
-         * PERUBAHAN: Menghapus item-badge sepenuhnya untuk tampilan ringkas.
+         * PERUBAHAN: Keranjang Fixed, Item Badge Dihapus Permanen.
          */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { 
@@ -170,16 +170,22 @@
             color: #FBF7F3; border-color: #6F4E37;
         }
         
-        /* FLOATING SUMMARY */
+        /* FLOATING SUMMARY - PENTING: Class .show akan membuat keranjang muncul! */
         .floating-summary {
             position: fixed; bottom: 0; left: 0; width: 100%;
             background: linear-gradient(135deg, #FBF7F3 0%, #fff 100%);
             border-radius: 20px 20px 0 0; 
             padding: 15px 20px 10px;
             box-shadow: 0 -5px 30px rgba(0,0,0,0.3);
-            z-index: 1000; display: none;
+            z-index: 1000; 
+            display: none; /* Default: Sembunyi */
             border-top: 3px solid #D4A574;
         }
+        
+        .floating-summary.show {
+            display: block; /* MUNCULKAN KERANJANG KETIKA ADA ITEM */
+        }
+        
         .summary-row { display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 1em; color: #4A2409; font-weight: 600; }
         .summary-total { font-size: 1.3em; font-weight: 700; padding-top: 10px; border-top: 2px dashed #D4A574; margin-top: 5px; color: #6F4E37; }
         
@@ -192,7 +198,7 @@
             margin-top: 10px; box-shadow: 0 4px 15px rgba(74, 44, 28, 0.4);
         }
         
-        /* MODAL STYLES (Dipertahankan) */
+        /* MODAL STYLES */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 2000; align-items: center; justify-content: center; padding: 15px; }
         .modal.active { display: flex; }
         .modal-content { background: #FBF7F3; padding: 25px; border-radius: 25px; max-width: 90%; width: 500px; max-height: 90vh; overflow-y: auto; border: 3px solid #D4A574; box-shadow: 0 5px 30px rgba(0,0,0,0.5); }
@@ -206,10 +212,7 @@
 
         /* MEDIA QUERIES (Tampilan Ringkas Mobile) */
         @media (max-width: 768px) {
-            .menu-grid { 
-                grid-template-columns: 1fr; 
-                gap: 12px;
-            }
+            .menu-grid { grid-template-columns: 1fr; gap: 12px; }
             .menu-item { border-radius: 10px; }
             .item-content { padding: 10px; }
             .hero-header h1 { font-size: 1.8em; }
@@ -293,7 +296,7 @@
                         <div class="item-content">
                             <div class="item-name">Renjana Americano</div>
                             <div class="item-desc">Espresso dan air panas, rasa kopi strong</div>
-                            <div class="item-price">Rp 5.000</div>
+                            <div class="item-price" id="price-2">Rp 5.000</div> 
                             <div class="item-controls-wrapper">
                                 <div class="item-controls">
                                     <button class="qty-btn" onclick="changeQty(2,-1)">−</button>
@@ -561,11 +564,11 @@
     </div>
     
     <script>
-        // Data Menu dan Logic tidak berubah
+        // Data Menu - PERUBAHAN HARGA AMERICANO (index 2)
         var menu = [
             {n: "Renjana Aren Latte", p: 8000, category: 0, keywords: ["aren", "latte", "kopi", "espresso", "gula aren"]},
             {n: "Renjana Hazelnut Coffee", p: 10000, category: 0, keywords: ["hazelnut", "kopi", "creamy", "aroma"]},
-            {n: "Renjana Americano", p: 6000, category: 0, keywords: ["americano", "kopi", "strong", "espresso", "panas"]},
+            {n: "Renjana Americano", p: 5000, category: 0, keywords: ["americano", "kopi", "strong", "espresso", "panas"]}, // DIUBAH DARI 6000 KE 5000
             {n: "Renjana Cappuccino", p: 8000, category: 0, keywords: ["cappuccino", "kopi", "creamy", "susu", "espresso"]},
             {n: "Stickymilk Matcha", r: 8000, b: 10000, s: 1, category: 1, keywords: ["matcha", "susu", "segar", "manis"]},
             {n: "Stickymilk Coklat", r: 8000, b: 10000, s: 1, category: 1, keywords: ["coklat", "susu", "creamy", "rich", "manis"]},
@@ -585,7 +588,7 @@
             ord.push({q: 0, z: 'reguler'});
         }
         
-        // --- Core Functions (Dipertahankan) ---
+        // --- Core Functions ---
         function changeQty(i, c) {
             var nq = ord[i].q + c;
             if (nq < 0) nq = 0;
@@ -627,7 +630,7 @@
             }
         }
         
-        // --- Order Process Functions (Dipertahankan) ---
+        // --- Order Process Functions ---
         function handleOrder() {
             var nm = document.getElementById('customerName').value.trim();
             if (!nm) {
@@ -745,6 +748,9 @@
                 noResults.style.display = 'none';
             }
         }
+        
+        // Memastikan tampilan awal Americano sudah Rp 5.000
+        document.getElementById('price-2').textContent = 'Rp 5.000';
         
         updateSummary();
     </script>
