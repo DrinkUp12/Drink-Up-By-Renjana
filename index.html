@@ -15,25 +15,19 @@
             overflow-x: hidden;
         }
         
-        /* Header dengan foto hero */
         .hero-header {
             position: relative;
-            height: 300px;
-            background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.6)), 
-                        url('https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=800') center/cover;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
+            padding: 40px 20px;
             text-align: center;
-            padding: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
         }
         
         .hero-header h1 { 
             font-size: 3em; 
             margin-bottom: 10px; 
-            text-shadow: 3px 3px 6px rgba(0,0,0,0.5);
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
             animation: fadeInDown 1s ease;
         }
         
@@ -41,6 +35,16 @@
             font-size: 1.3em; 
             opacity: 0.95;
             animation: fadeInUp 1s ease;
+        }
+        
+        .contact-info {
+            margin-top: 15px;
+            font-size: 1.1em;
+            font-weight: 600;
+            background: rgba(255,255,255,0.2);
+            display: inline-block;
+            padding: 10px 20px;
+            border-radius: 25px;
         }
         
         @keyframes fadeInDown {
@@ -55,7 +59,7 @@
         
         .container { 
             max-width: 1200px; 
-            margin: -50px auto 0; 
+            margin: -30px auto 0; 
             background: white; 
             border-radius: 30px 30px 0 0; 
             box-shadow: 0 -10px 40px rgba(0,0,0,0.3); 
@@ -63,7 +67,7 @@
             z-index: 10;
         }
         
-        .content { padding: 30px 20px; }
+        .content { padding: 30px 20px 120px; }
         
         .customer-info { 
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -106,11 +110,12 @@
             color: white;
             border-radius: 15px;
             box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+            text-align: center;
         }
         
         .menu-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
             gap: 20px;
         }
         
@@ -133,11 +138,26 @@
             box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
         }
         
-        .item-image {
-            width: 100%;
-            height: 180px;
-            object-fit: cover;
+        .item-badge {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-align: center;
+            padding: 50px 20px;
+            font-size: 1.3em;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            position: relative;
+        }
+        
+        .item-badge::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: rgba(255,255,255,0.3);
         }
         
         .item-content {
@@ -147,14 +167,22 @@
         .item-name { 
             font-weight: 700; 
             color: #333; 
-            font-size: 1.2em; 
+            font-size: 1.3em; 
             margin-bottom: 8px;
+        }
+        
+        .item-desc {
+            color: #666;
+            font-size: 0.95em;
+            line-height: 1.5;
+            margin-bottom: 15px;
+            min-height: 60px;
         }
         
         .item-price { 
             color: #667eea; 
             font-weight: 700; 
-            font-size: 1.1em;
+            font-size: 1.2em;
             margin-bottom: 15px;
         }
         
@@ -397,12 +425,12 @@
             box-shadow: 0 6px 20px rgba(220, 53, 69, 0.4);
         }
         
-        /* Responsive */
         @media (max-width: 768px) {
-            .hero-header h1 { font-size: 2em; }
-            .hero-header { height: 250px; }
+            .hero-header h1 { font-size: 2.2em; }
+            .hero-header p { font-size: 1.1em; }
             .menu-grid { grid-template-columns: 1fr; }
             .category-header { font-size: 1.5em; }
+            .item-name { font-size: 1.2em; }
         }
     </style>
 </head>
@@ -410,6 +438,7 @@
     <div class="hero-header">
         <h1>☕ Renjana</h1>
         <p>✨ Nikmati Kelezatan Setiap Tegukan ✨</p>
+        <div class="contact-info">📞 INFO PEMESANAN: 081226931785</div>
     </div>
     
     <div class="container">
@@ -420,12 +449,13 @@
             </div>
             
             <div class="category">
-                <div class="category-header">☕ Coffee</div>
+                <div class="category-header">☕ Coffee Series</div>
                 <div class="menu-grid">
                     <div class="menu-item" id="item-0">
-                        <img src="https://images.unsplash.com/photo-1461023058943-07fcbe16d735?w=400" class="item-image" alt="Aren Latte">
+                        <div class="item-badge">RENJANA AREN LATTE</div>
                         <div class="item-content">
                             <div class="item-name">Renjana Aren Latte</div>
+                            <div class="item-desc">Espresso dengan susu segar dan gula aren</div>
                             <div class="item-price">Rp 8.000</div>
                             <div class="item-controls">
                                 <button class="qty-btn" onclick="changeQty(0,-1)">−</button>
@@ -436,9 +466,10 @@
                     </div>
                     
                     <div class="menu-item" id="item-1">
-                        <img src="https://images.unsplash.com/photo-1517487881594-2787fef5ebf7?w=400" class="item-image" alt="Hazelnut Coffee">
+                        <div class="item-badge">RENJANA HAZELNUT COFFEE</div>
                         <div class="item-content">
                             <div class="item-name">Renjana Hazelnut Coffee</div>
+                            <div class="item-desc">Kopi dengan aroma hazelnut yang khas dan creamy</div>
                             <div class="item-price">Rp 10.000</div>
                             <div class="item-controls">
                                 <button class="qty-btn" onclick="changeQty(1,-1)">−</button>
@@ -449,9 +480,10 @@
                     </div>
                     
                     <div class="menu-item" id="item-2">
-                        <img src="https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=400" class="item-image" alt="Americano">
+                        <div class="item-badge">RENJANA AMERICANO</div>
                         <div class="item-content">
                             <div class="item-name">Renjana Americano</div>
+                            <div class="item-desc">Espresso dan air panas, rasa kopi strong</div>
                             <div class="item-price">Rp 6.000</div>
                             <div class="item-controls">
                                 <button class="qty-btn" onclick="changeQty(2,-1)">−</button>
@@ -462,9 +494,10 @@
                     </div>
                     
                     <div class="menu-item" id="item-3">
-                        <img src="https://images.unsplash.com/photo-1572442388796-11668a67e53d?w=400" class="item-image" alt="Cappuccino">
+                        <div class="item-badge">RENJANA CAPPUCCINO</div>
                         <div class="item-content">
                             <div class="item-name">Renjana Cappuccino</div>
+                            <div class="item-desc">Espresso dan susu creamy</div>
                             <div class="item-price">Rp 8.000</div>
                             <div class="item-controls">
                                 <button class="qty-btn" onclick="changeQty(3,-1)">−</button>
@@ -480,9 +513,10 @@
                 <div class="category-header">🧋 DrinkUp with Renjana</div>
                 <div class="menu-grid">
                     <div class="menu-item" id="item-4">
-                        <img src="https://images.unsplash.com/photo-1536013564958-c6b5b92c6a28?w=400" class="item-image" alt="Matcha">
+                        <div class="item-badge">STICKY MILK MATCHA</div>
                         <div class="item-content">
                             <div class="item-name">Stickymilk Matcha</div>
+                            <div class="item-desc">Matcha lembut dengan susu manis dan es segar</div>
                             <div class="item-price">Reguler: Rp 8.000 | Big: Rp 10.000</div>
                             <div class="size-options">
                                 <button class="size-btn active" onclick="changeSize(4,'reguler',this)">Reguler</button>
@@ -497,9 +531,10 @@
                     </div>
                     
                     <div class="menu-item" id="item-5">
-                        <img src="https://images.unsplash.com/photo-1542990253-0d0f5be5f0ed?w=400" class="item-image" alt="Coklat">
+                        <div class="item-badge">STICKY MILK COKLAT</div>
                         <div class="item-content">
                             <div class="item-name">Stickymilk Coklat</div>
+                            <div class="item-desc">Coklat rich berpadu susu creamy yang manis</div>
                             <div class="item-price">Reguler: Rp 8.000 | Big: Rp 10.000</div>
                             <div class="size-options">
                                 <button class="size-btn active" onclick="changeSize(5,'reguler',this)">Reguler</button>
@@ -514,9 +549,10 @@
                     </div>
                     
                     <div class="menu-item" id="item-6">
-                        <img src="https://images.unsplash.com/photo-1624318734958-eb820fc57d9a?w=400" class="item-image" alt="Taro">
+                        <div class="item-badge">STICKY MILK TARO</div>
                         <div class="item-content">
                             <div class="item-name">Stickymilk Taro</div>
+                            <div class="item-desc">Taro halus dengan rasa manis khas dan creamy</div>
                             <div class="item-price">Reguler: Rp 8.000 | Big: Rp 10.000</div>
                             <div class="size-options">
                                 <button class="size-btn active" onclick="changeSize(6,'reguler',this)">Reguler</button>
@@ -531,9 +567,10 @@
                     </div>
                     
                     <div class="menu-item" id="item-7">
-                        <img src="https://images.unsplash.com/photo-1578374173705-c04dafc3d3c7?w=400" class="item-image" alt="Hazelnut">
+                        <div class="item-badge">STICKY MILK COKO HAZELNUT</div>
                         <div class="item-content">
                             <div class="item-name">Stickymilk Hazelnut</div>
+                            <div class="item-desc">Coklat dan hazelnut creamy dengan aroma wangi</div>
                             <div class="item-price">Reguler: Rp 8.000 | Big: Rp 10.000</div>
                             <div class="size-options">
                                 <button class="size-btn active" onclick="changeSize(7,'reguler',this)">Reguler</button>
@@ -548,9 +585,10 @@
                     </div>
                     
                     <div class="menu-item" id="item-8">
-                        <img src="https://images.unsplash.com/photo-1556910103-1c02745aae4d?w=400" class="item-image" alt="Permen Karet">
+                        <div class="item-badge">STICKY MILK PERMEN KARET</div>
                         <div class="item-content">
                             <div class="item-name">Stickymilk Permen Karet</div>
+                            <div class="item-desc">Rasa manis unik seperti bubblegum yang segar</div>
                             <div class="item-price">Reguler: Rp 8.000 | Big: Rp 10.000</div>
                             <div class="size-options">
                                 <button class="size-btn active" onclick="changeSize(8,'reguler',this)">Reguler</button>
@@ -565,9 +603,10 @@
                     </div>
                     
                     <div class="menu-item" id="item-9">
-                        <img src="https://images.unsplash.com/photo-1546548970-71785318a17b?w=400" class="item-image" alt="Strawberry">
+                        <div class="item-badge">STICKY MILK STRAWBERRY</div>
                         <div class="item-content">
                             <div class="item-name">Stickymilk Strawberry</div>
+                            <div class="item-desc">Susu berpadu sirup strawberry manis dan fruity</div>
                             <div class="item-price">Reguler: Rp 8.000 | Big: Rp 10.000</div>
                             <div class="size-options">
                                 <button class="size-btn active" onclick="changeSize(9,'reguler',this)">Reguler</button>
@@ -582,9 +621,10 @@
                     </div>
                     
                     <div class="menu-item" id="item-10">
-                        <img src="https://images.unsplash.com/photo-1621425167125-6c32e2db0b0f?w=400" class="item-image" alt="Red Velvet">
+                        <div class="item-badge">STICKY MILK RED VELVET</div>
                         <div class="item-content">
                             <div class="item-name">Stickymilk Red Velvet</div>
+                            <div class="item-desc">Red velvet lembut dengan susu gurih manis</div>
                             <div class="item-price">Reguler: Rp 8.000 | Big: Rp 10.000</div>
                             <div class="size-options">
                                 <button class="size-btn active" onclick="changeSize(10,'reguler',this)">Reguler</button>
@@ -601,12 +641,13 @@
             </div>
             
             <div class="category">
-                <div class="category-header">🍃 Tea</div>
+                <div class="category-header">🍃 Tea Series</div>
                 <div class="menu-grid">
                     <div class="menu-item" id="item-11">
-                        <img src="https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=400" class="item-image" alt="Es Teh">
+                        <div class="item-badge">ES TEH RENJANA</div>
                         <div class="item-content">
                             <div class="item-name">Es Teh Renjana</div>
+                            <div class="item-desc">Teh segar dengan gula</div>
                             <div class="item-price">Rp 3.000</div>
                             <div class="item-controls">
                                 <button class="qty-btn" onclick="changeQty(11,-1)">−</button>
@@ -617,9 +658,10 @@
                     </div>
                     
                     <div class="menu-item" id="item-12">
-                        <img src="https://images.unsplash.com/photo-1576092768241-dec231879fc3?w=400" class="item-image" alt="Thai Tea">
+                        <div class="item-badge">THAI TEA RENJANA</div>
                         <div class="item-content">
                             <div class="item-name">Thai Tea Renjana</div>
+                            <div class="item-desc">Teh Thailand creamy dengan susu</div>
                             <div class="item-price">Rp 8.000</div>
                             <div class="item-controls">
                                 <button class="qty-btn" onclick="changeQty(12,-1)">−</button>
@@ -630,9 +672,10 @@
                     </div>
                     
                     <div class="menu-item" id="item-13">
-                        <img src="https://images.unsplash.com/photo-1564890369478-c89ca6d9cde9?w=400" class="item-image" alt="Teh Tarik">
+                        <div class="item-badge">TEH TARIK RENJANA</div>
                         <div class="item-content">
                             <div class="item-name">Teh Tarik Renjana</div>
+                            <div class="item-desc">Teh creamy dengan susu yang dikocok</div>
                             <div class="item-price">Rp 8.000</div>
                             <div class="item-controls">
                                 <button class="qty-btn" onclick="changeQty(13,-1)">−</button>
@@ -643,9 +686,10 @@
                     </div>
                     
                     <div class="menu-item" id="item-14">
-                        <img src="https://images.unsplash.com/photo-1563822249548-9a72b6353cd1?w=400" class="item-image" alt="Teh Milk">
+                        <div class="item-badge">TEH MILK RENJANA</div>
                         <div class="item-content">
                             <div class="item-name">Teh Milk Renjana</div>
+                            <div class="item-desc">Teh manis dengan tambahan susu segar</div>
                             <div class="item-price">Rp 8.000</div>
                             <div class="item-controls">
                                 <button class="qty-btn" onclick="changeQty(14,-1)">−</button>
@@ -656,8 +700,6 @@
                     </div>
                 </div>
             </div>
-            
-            <div style="height: 100px;"></div>
         </div>
     </div>
     
