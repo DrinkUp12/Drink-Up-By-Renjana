@@ -262,11 +262,12 @@
             <div class="category" id="category-0">
                 <div class="category-header">☕ Coffee Series</div>
                 <div class="menu-grid" id="grid-0">
+                    
                     <div class="menu-item" id="item-0">
                         <div class="item-content">
-                            <div class="item-name">Renjana Aren Latte</div>
-                            <div class="item-desc">Espresso dengan susu segar dan gula aren</div>
-                            <div class="item-price">Rp 8.000</div>
+                            <div class="item-name">Renjana Americano</div>
+                            <div class="item-desc">Espresso dan air panas, rasa kopi strong</div>
+                            <div class="item-price" id="price-0">Rp 5.000</div> 
                             <div class="item-controls-wrapper">
                                 <div class="item-controls">
                                     <button class="qty-btn" onclick="changeQty(0,-1)">−</button>
@@ -277,33 +278,31 @@
                         </div>
                     </div>
                     
-
-                    
-                    <div class="menu-item" id="item-2">
+                    <div class="menu-item" id="item-1">
                         <div class="item-content">
-                            <div class="item-name">Renjana Americano</div>
-                            <div class="item-desc">Espresso dan air panas, rasa kopi strong</div>
-                            <div class="item-price" id="price-2">Rp 5.000</div> 
+                            <div class="item-name">Renjana Aren Latte</div>
+                            <div class="item-desc">Espresso dengan susu segar dan gula aren</div>
+                            <div class="item-price">Rp 8.000</div>
                             <div class="item-controls-wrapper">
                                 <div class="item-controls">
-                                    <button class="qty-btn" onclick="changeQty(2,-1)">−</button>
-                                    <div class="qty-display" id="qty-2">0</div>
-                                    <button class="qty-btn" onclick="changeQty(2,1)">+</button>
+                                    <button class="qty-btn" onclick="changeQty(1,-1)">−</button>
+                                    <div class="qty-display" id="qty-1">0</div>
+                                    <button class="qty-btn" onclick="changeQty(1,1)">+</button>
                                 </div>
                             </div>
                         </div>
                     </div>
                     
-                    <div class="menu-item" id="item-3">
+                    <div class="menu-item" id="item-2">
                         <div class="item-content">
                             <div class="item-name">Renjana Cappuccino</div>
                             <div class="item-desc">Espresso dan susu creamy</div>
                             <div class="item-price">Rp 8.000</div>
                             <div class="item-controls-wrapper">
                                 <div class="item-controls">
-                                    <button class="qty-btn" onclick="changeQty(3,-1)">−</button>
-                                    <div class="qty-display" id="qty-3">0</div>
-                                    <button class="qty-btn" onclick="changeQty(3,1)">+</button>
+                                    <button class="qty-btn" onclick="changeQty(2,-1)">−</button>
+                                    <div class="qty-display" id="qty-2">0</div>
+                                    <button class="qty-btn" onclick="changeQty(2,1)">+</button>
                                 </div>
                             </div>
                         </div>
@@ -314,10 +313,30 @@
             <div class="category" id="category-1">
                 <div class="category-header">🧋 DrinkUp with Renjana</div>
                 <div class="menu-grid" id="grid-1">
-                    <div class="menu-item" id="item-4">
+                    
+                    <div class="menu-item" id="item-3">
                         <div class="item-content">
                             <div class="item-name">Stickymilk Matcha</div>
                             <div class="item-desc">Matcha lembut dengan susu manis dan es segar</div>
+                            <div class="item-price">Reguler: Rp 8.000 | Big: Rp 10.000</div>
+                            <div class="size-options">
+                                <button class="size-btn active" onclick="changeSize(3,'reguler',this)">Reguler</button>
+                                <button class="size-btn" onclick="changeSize(3,'big',this)">Big</button>
+                            </div>
+                            <div class="item-controls-wrapper">
+                                <div class="item-controls">
+                                    <button class="qty-btn" onclick="changeQty(3,-1)">−</button>
+                                    <div class="qty-display" id="qty-3">0</div>
+                                    <button class="qty-btn" onclick="changeQty(3,1)">+</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="menu-item" id="item-4">
+                        <div class="item-content">
+                            <div class="item-name">Stickymilk Coklat</div>
+                            <div class="item-desc">Coklat rich berpadu susu creamy yang manis</div>
                             <div class="item-price">Reguler: Rp 8.000 | Big: Rp 10.000</div>
                             <div class="size-options">
                                 <button class="size-btn active" onclick="changeSize(4,'reguler',this)">Reguler</button>
@@ -335,8 +354,8 @@
                     
                     <div class="menu-item" id="item-5">
                         <div class="item-content">
-                            <div class="item-name">Stickymilk Coklat</div>
-                            <div class="item-desc">Coklat rich berpadu susu creamy yang manis</div>
+                            <div class="item-name">Stickymilk Taro</div>
+                            <div class="item-desc">Taro halus dengan rasa manis khas dan creamy</div>
                             <div class="item-price">Reguler: Rp 8.000 | Big: Rp 10.000</div>
                             <div class="size-options">
                                 <button class="size-btn active" onclick="changeSize(5,'reguler',this)">Reguler</button>
@@ -354,8 +373,8 @@
                     
                     <div class="menu-item" id="item-6">
                         <div class="item-content">
-                            <div class="item-name">Stickymilk Taro</div>
-                            <div class="item-desc">Taro halus dengan rasa manis khas dan creamy</div>
+                            <div class="item-name">Stickymilk Hazelnut</div>
+                            <div class="item-desc">Coklat dan hazelnut creamy dengan aroma wangi</div>
                             <div class="item-price">Reguler: Rp 8.000 | Big: Rp 10.000</div>
                             <div class="size-options">
                                 <button class="size-btn active" onclick="changeSize(6,'reguler',this)">Reguler</button>
@@ -373,8 +392,8 @@
                     
                     <div class="menu-item" id="item-7">
                         <div class="item-content">
-                            <div class="item-name">Stickymilk Hazelnut</div>
-                            <div class="item-desc">Coklat dan hazelnut creamy dengan aroma wangi</div>
+                            <div class="item-name">Stickymilk Permen Karet</div>
+                            <div class="item-desc">Rasa manis unik seperti bubblegum yang segar</div>
                             <div class="item-price">Reguler: Rp 8.000 | Big: Rp 10.000</div>
                             <div class="size-options">
                                 <button class="size-btn active" onclick="changeSize(7,'reguler',this)">Reguler</button>
@@ -392,8 +411,8 @@
                     
                     <div class="menu-item" id="item-8">
                         <div class="item-content">
-                            <div class="item-name">Stickymilk Permen Karet</div>
-                            <div class="item-desc">Rasa manis unik seperti bubblegum yang segar</div>
+                            <div class="item-name">Stickymilk Strawberry</div>
+                            <div class="item-desc">Susu berpadu sirup strawberry manis dan fruity</div>
                             <div class="item-price">Reguler: Rp 8.000 | Big: Rp 10.000</div>
                             <div class="size-options">
                                 <button class="size-btn active" onclick="changeSize(8,'reguler',this)">Reguler</button>
@@ -411,8 +430,8 @@
                     
                     <div class="menu-item" id="item-9">
                         <div class="item-content">
-                            <div class="item-name">Stickymilk Strawberry</div>
-                            <div class="item-desc">Susu berpadu sirup strawberry manis dan fruity</div>
+                            <div class="item-name">Stickymilk Red Velvet</div>
+                            <div class="item-desc">Red velvet lembut dengan susu gurih manis</div>
                             <div class="item-price">Reguler: Rp 8.000 | Big: Rp 10.000</div>
                             <div class="size-options">
                                 <button class="size-btn active" onclick="changeSize(9,'reguler',this)">Reguler</button>
@@ -427,16 +446,18 @@
                             </div>
                         </div>
                     </div>
+                </div>
+            </div>
+            
+            <div class="category" id="category-2">
+                <div class="category-header">🍃 Tea Series</div>
+                <div class="menu-grid" id="grid-2">
                     
                     <div class="menu-item" id="item-10">
                         <div class="item-content">
-                            <div class="item-name">Stickymilk Red Velvet</div>
-                            <div class="item-desc">Red velvet lembut dengan susu gurih manis</div>
-                            <div class="item-price">Reguler: Rp 8.000 | Big: Rp 10.000</div>
-                            <div class="size-options">
-                                <button class="size-btn active" onclick="changeSize(10,'reguler',this)">Reguler</button>
-                                <button class="size-btn" onclick="changeSize(10,'big',this)">Big</button>
-                            </div>
+                            <div class="item-name">Es Teh Renjana</div>
+                            <div class="item-desc">Teh segar dengan gula</div>
+                            <div class="item-price">Rp 3.000</div>
                             <div class="item-controls-wrapper">
                                 <div class="item-controls">
                                     <button class="qty-btn" onclick="changeQty(10,-1)">−</button>
@@ -446,17 +467,12 @@
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
-            
-            <div class="category" id="category-2">
-                <div class="category-header">🍃 Tea Series</div>
-                <div class="menu-grid" id="grid-2">
+                    
                     <div class="menu-item" id="item-11">
                         <div class="item-content">
-                            <div class="item-name">Es Teh Renjana</div>
-                            <div class="item-desc">Teh segar dengan gula</div>
-                            <div class="item-price">Rp 3.000</div>
+                            <div class="item-name">Thai Tea Renjana</div>
+                            <div class="item-desc">Teh Thailand creamy dengan susu</div>
+                            <div class="item-price">Rp 8.000</div>
                             <div class="item-controls-wrapper">
                                 <div class="item-controls">
                                     <button class="qty-btn" onclick="changeQty(11,-1)">−</button>
@@ -469,8 +485,8 @@
                     
                     <div class="menu-item" id="item-12">
                         <div class="item-content">
-                            <div class="item-name">Thai Tea Renjana</div>
-                            <div class="item-desc">Teh Thailand creamy dengan susu</div>
+                            <div class="item-name">Teh Tarik Renjana</div>
+                            <div class="item-desc">Teh creamy dengan susu yang dikocok</div>
                             <div class="item-price">Rp 8.000</div>
                             <div class="item-controls-wrapper">
                                 <div class="item-controls">
@@ -484,29 +500,14 @@
                     
                     <div class="menu-item" id="item-13">
                         <div class="item-content">
-                            <div class="item-name">Teh Tarik Renjana</div>
-                            <div class="item-desc">Teh creamy dengan susu yang dikocok</div>
+                            <div class="item-name">Teh Milk Renjana</div>
+                            <div class="item-desc">Teh manis dengan tambahan susu segar</div>
                             <div class="item-price">Rp 8.000</div>
                             <div class="item-controls-wrapper">
                                 <div class="item-controls">
                                     <button class="qty-btn" onclick="changeQty(13,-1)">−</button>
                                     <div class="qty-display" id="qty-13">0</div>
                                     <button class="qty-btn" onclick="changeQty(13,1)">+</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="menu-item" id="item-14">
-                        <div class="item-content">
-                            <div class="item-name">Teh Milk Renjana</div>
-                            <div class="item-desc">Teh manis dengan tambahan susu segar</div>
-                            <div class="item-price">Rp 8.000</div>
-                            <div class="item-controls-wrapper">
-                                <div class="item-controls">
-                                    <button class="qty-btn" onclick="changeQty(14,-1)">−</button>
-                                    <div class="qty-display" id="qty-14">0</div>
-                                    <button class="qty-btn" onclick="changeQty(14,1)">+</button>
                                 </div>
                             </div>
                         </div>
@@ -551,12 +552,17 @@
     </div>
     
     <script>
-        // Data Menu - PERUBAHAN HARGA AMERICANO (index 2)
+        // Data Menu - Americano di index 0 dan Hazelnut Coffee telah dihapus.
+        // Total item berkurang dari 15 menjadi 14 (Index 0 hingga 13).
         var menu = [
-            {n: "Renjana Aren Latte", p: 8000, category: 0, keywords: ["aren", "latte", "kopi", "espresso", "gula aren"]},
-    
-            {n: "Renjana Americano", p: 5000, category: 0, keywords: ["americano", "kopi", "strong", "espresso", "panas"]}, // DIUBAH DARI 6000 KE 5000
+            // NEW INDEX 0 (Americano - harga 5K)
+            {n: "Renjana Americano", p: 5000, category: 0, keywords: ["americano", "kopi", "strong", "espresso", "panas"]}, 
+            // NEW INDEX 1 (Aren Latte)
+            {n: "Renjana Aren Latte", p: 8000, category: 0, keywords: ["aren", "latte", "kopi", "espresso", "gula aren"]}, 
+            // NEW INDEX 2 (Cappuccino)
             {n: "Renjana Cappuccino", p: 8000, category: 0, keywords: ["cappuccino", "kopi", "creamy", "susu", "espresso"]},
+            
+            // NEW INDEX 3 - 9 (DrinkUp Series)
             {n: "Stickymilk Matcha", r: 8000, b: 10000, s: 1, category: 1, keywords: ["matcha", "susu", "segar", "manis"]},
             {n: "Stickymilk Coklat", r: 8000, b: 10000, s: 1, category: 1, keywords: ["coklat", "susu", "creamy", "rich", "manis"]},
             {n: "Stickymilk Taro", r: 8000, b: 10000, s: 1, category: 1, keywords: ["taro", "susu", "manis", "halus", "creamy"]},
@@ -564,6 +570,8 @@
             {n: "Stickymilk Permen Karet", r: 8000, b: 10000, s: 1, category: 1, keywords: ["permen karet", "bubblegum", "manis", "unik", "segar"]},
             {n: "Stickymilk Strawberry", r: 8000, b: 10000, s: 1, category: 1, keywords: ["strawberry", "susu", "manis", "fruity"]},
             {n: "Stickymilk Red Velvet", r: 8000, b: 10000, s: 1, category: 1, keywords: ["red velvet", "susu", "gurih", "manis", "lembut"]},
+            
+            // NEW INDEX 10 - 13 (Tea Series)
             {n: "Es Teh Renjana", p: 3000, category: 2, keywords: ["es teh", "teh", "segar", "gula"]},
             {n: "Thai Tea Renjana", p: 8000, category: 2, keywords: ["thai tea", "teh", "thailand", "creamy", "susu"]},
             {n: "Teh Tarik Renjana", p: 8000, category: 2, keywords: ["teh tarik", "teh", "kocok", "creamy", "susu"]},
@@ -736,8 +744,8 @@
             }
         }
         
-        // Memastikan tampilan awal Americano sudah Rp 5.000
-        document.getElementById('price-2').textContent = 'Rp 5.000';
+        // Memastikan tampilan awal Americano (sekarang index 0) sudah Rp 5.000
+        document.getElementById('price-0').textContent = 'Rp 5.000';
         
         updateSummary();
     </script>
