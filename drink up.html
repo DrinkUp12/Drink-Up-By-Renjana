@@ -156,6 +156,146 @@
   }
   .notes-field textarea::placeholder { color: #45423a; }
 
+  /* PICKUP SCHEDULE */
+  .pickup-field {
+    background: var(--surface);
+    border: 1px solid #2e2b22;
+    border-radius: 14px;
+    padding: 16px 20px;
+    margin-bottom: 32px;
+    transition: border-color 0.3s;
+  }
+  .pickup-field-top {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .pickup-field-top .icon { font-size: 1em; opacity: 0.6; }
+  .pickup-field-top label {
+    font-size: 0.88em;
+    color: var(--muted);
+    font-weight: 500;
+    flex: 1;
+  }
+  .pickup-info-tag {
+    font-size: 0.72em;
+    background: rgba(201,168,76,0.12);
+    color: var(--gold-dim);
+    padding: 2px 8px;
+    border-radius: 6px;
+    letter-spacing: 0.3px;
+  }
+  .pickup-day-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .day-btn {
+    flex: 1;
+    padding: 8px 4px;
+    background: transparent;
+    border: 1.5px solid #2e2b22;
+    border-radius: 10px;
+    color: var(--muted);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.8em;
+    font-weight: 600;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.2s;
+    line-height: 1.3;
+  }
+  .day-btn .day-name { display: block; }
+  .day-btn .day-date { display: block; font-size: 0.85em; font-weight: 400; opacity: 0.7; }
+  .day-btn.active { background: var(--gold); color: var(--bg); border-color: var(--gold); }
+  .day-btn.active .day-date { opacity: 0.75; }
+  .time-slots-label {
+    font-size: 0.78em;
+    color: var(--muted);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .time-slots {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+  }
+  .time-btn {
+    padding: 7px 12px;
+    background: transparent;
+    border: 1.5px solid #2e2b22;
+    border-radius: 8px;
+    color: var(--muted);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.82em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .time-btn.active { background: var(--gold); color: var(--bg); border-color: var(--gold); }
+  .time-btn:disabled { opacity: 0.25; cursor: not-allowed; border-color: #1e1c16; color: #3a3720; }
+  .no-slots-msg {
+    font-size: 0.85em;
+    color: var(--muted);
+    font-style: italic;
+    padding: 6px 0;
+  }
+
+  /* PAYMENT NOTICE OVERLAY */
+  .pay-overlay {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.85);
+    backdrop-filter: blur(6px);
+    z-index: 300;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .pay-overlay.active { display: flex; }
+  .pay-card {
+    background: var(--surface);
+    border: 1px solid #2e2b22;
+    border-radius: 20px;
+    padding: 32px 24px;
+    max-width: 360px;
+    width: 100%;
+    text-align: center;
+    animation: slideUp 0.3s ease;
+  }
+  .pay-icon { font-size: 3em; margin-bottom: 14px; }
+  .pay-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4em;
+    font-weight: 700;
+    color: var(--cream);
+    margin-bottom: 12px;
+  }
+  .pay-body {
+    font-size: 0.9em;
+    color: var(--muted);
+    line-height: 1.7;
+    margin-bottom: 20px;
+  }
+  .pay-body strong { color: var(--gold); }
+  .pay-close-btn {
+    width: 100%;
+    padding: 13px;
+    background: var(--gold);
+    color: var(--bg);
+    border: none;
+    border-radius: 12px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.95em;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .pay-close-btn:hover { background: var(--gold-light); }
+
   /* CATEGORY */
   .category { margin-bottom: 36px; }
   .category-label {
@@ -515,6 +655,18 @@
       <span class="optional-tag">opsional</span>
     </div>
     <textarea id="orderNotes" placeholder="cth: es tehnya gulanya sedikit saja, kopinya jangan terlalu pahit..."></textarea>
+  </div>
+
+  <!-- PICKUP SCHEDULE -->
+  <div class="pickup-field">
+    <div class="pickup-field-top">
+      <span class="icon">&#128336;</span>
+      <label>Waktu Pengambilan</label>
+      <span class="pickup-info-tag">siap kurang dari 30 menit setelah pembayaran</span>
+    </div>
+    <div class="pickup-day-row" id="dayRow"></div>
+    <div class="time-slots-label">Pilih Jam Pengambilan</div>
+    <div class="time-slots" id="timeSlots"></div>
   </div>
 
   <!-- COFFEE -->
@@ -909,6 +1061,7 @@
     <div class="sheet-handle"></div>
     <div class="sheet-title">Konfirmasi Pesanan</div>
     <div class="order-name-label">Atas nama: <strong id="modalName"></strong></div>
+    <div id="modalPickup" style="text-align:center;margin-bottom:14px;font-size:0.85em;color:var(--gold);"></div>
     <div class="order-items" id="modalItems"></div>
     <div class="order-total-bar">
       <span class="order-total-label">Total Pembayaran</span>
@@ -921,6 +1074,20 @@
         Kirim ke WhatsApp
       </button>
     </div>
+  </div>
+</div>
+
+<!-- PAYMENT NOTICE -->
+<div class="pay-overlay" id="payOverlay">
+  <div class="pay-card">
+    <div class="pay-icon">&#128640;</div>
+    <div class="pay-title">Pesanan Terkirim!</div>
+    <div class="pay-body">
+      Pesananmu sudah dikirim ke WhatsApp kami.<br><br>
+      Mohon segera lakukan <strong>pembayaran</strong> agar pesanan langsung diproses dan siap tepat waktu.<br><br>
+      Terima kasih sudah memesan di <strong>Renjana</strong> ☕
+    </div>
+    <button class="pay-close-btn" onclick="closePay()">Oke, Siap!</button>
   </div>
 </div>
 
@@ -943,14 +1110,12 @@
 
 <script>
 var menu = [
-  // COFFEE
   {n:"Renjana Americano", p:5000, a:1},
   {n:"Renjana Kopi Hitam", p:5000, a:1},
   {n:"Renjana Cappuccino", p:8000, a:1},
   {n:"Renjana Aren Latte", p:8000, a:1},
   {n:"Good Day (All Varian)", p:5000, a:1},
   {n:"Coffee Lainnya (All Varian)", p:5000, a:1},
-  // NON-COFFEE
   {n:"Sticky Milk Matcha", r:8000, b:10000, s:1, a:1},
   {n:"Sticky Milk Coklat", r:8000, b:10000, s:1, a:1},
   {n:"Sticky Milk Taro", r:8000, b:10000, s:1, a:1},
@@ -959,14 +1124,12 @@ var menu = [
   {n:"Sticky Milk Permen Karet", r:8000, b:10000, s:1, a:1},
   {n:"Sticky Milk Strawberry", r:8000, b:10000, s:1, a:1},
   {n:"Es Jeruk Peras", p:5000, a:1},
-  // TEA
   {n:"Es Teh Renjana", p:3000, a:1},
   {n:"Es Teh Leci", p:5000, a:1},
   {n:"Es Teh Apel", p:5000, a:1},
   {n:"Thai Tea Renjana", p:8000, a:1},
   {n:"Teh Tarik Renjana", p:8000, a:1},
   {n:"Teh Milk Renjana", p:8000, a:1},
-  // FOOD
   {n:"Ayam Saja", p:5000, a:1},
   {n:"Paket Ayam + Nasi", p:10000, a:1},
   {n:"Paket Ayam + Nasi + Es Teh", p:12000, a:1}
@@ -974,9 +1137,128 @@ var menu = [
 
 var ord = menu.map(function(){ return {q:0, z:'reguler'}; });
 
+// --- SCHEDULE ---
+var DAYS_ID = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
+var MONTHS_ID = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+
+// Jam operasional: 10.00 - 18.00
+var OPEN_HOUR = 10;
+var CLOSE_HOUR = 18;
+
+var selectedDay = 0;
+var selectedSlot = null;
+
+function pad(n){ return n < 10 ? '0'+n : ''+n; }
+
+function getDays(){
+  var now = new Date(), days = [];
+  for(var i=0;i<2;i++){
+    var d = new Date(now);
+    d.setDate(now.getDate()+i);
+    days.push(d);
+  }
+  return days;
+}
+
+function getSlots(dayDate){
+  var now = new Date();
+  var isToday = (dayDate.toDateString() === now.toDateString());
+  var slots = [];
+
+  for(var h = OPEN_HOUR; h <= CLOSE_HOUR; h++){
+    for(var m = 0; m < 60; m += 30){
+      // Jangan lewati jam tutup
+      if(h === CLOSE_HOUR && m > 0) break;
+
+      var endH = h + (m + 30 >= 60 ? 1 : 0);
+      var endM = (m + 30) % 60;
+      if(endH > CLOSE_HOUR || (endH === CLOSE_HOUR && endM > 0)) break;
+
+      var label = pad(h)+'.'+pad(m)+' - '+pad(endH)+'.'+pad(endM);
+      var disabled = false;
+
+      if(isToday){
+        // Sembunyikan slot jika waktu mulainya < sekarang + 30 menit
+        var slotStart = new Date(now);
+        slotStart.setHours(h, m, 0, 0);
+        var minPickup = new Date(now.getTime() + 30 * 60 * 1000);
+        if(slotStart < minPickup) disabled = true;
+      }
+
+      slots.push({label:label, disabled:disabled});
+    }
+  }
+  return slots;
+}
+
+function buildDayRow(){
+  var days = getDays();
+  var now = new Date();
+
+  // Cek apakah hari ini masih ada slot yang tersedia (jam sekarang < 18.00)
+  var todayHasSlots = now.getHours() < CLOSE_HOUR ||
+                      (now.getHours() === CLOSE_HOUR && now.getMinutes() === 0);
+
+  // Tentukan tab default: hari ini jika masih ada slot, besok jika tidak
+  var defaultDay = todayHasSlots ? 0 : 1;
+
+  var html = '';
+  days.forEach(function(d, i){
+    var dayLabel = i===0 ? 'Hari Ini' : 'Besok';
+    var dateStr = d.getDate()+' '+MONTHS_ID[d.getMonth()];
+    html += '<button class="day-btn'+(i===defaultDay?' active':'')+'" onclick="selectDay('+i+',this)">'
+          + '<span class="day-name">'+dayLabel+'</span>'
+          + '<span class="day-date">'+DAYS_ID[d.getDay()]+', '+dateStr+'</span>'
+          + '</button>';
+  });
+  document.getElementById('dayRow').innerHTML = html;
+  selectedDay = defaultDay;
+  buildTimeSlots(defaultDay);
+}
+
+function selectDay(idx, btn){
+  document.querySelectorAll('.day-btn').forEach(function(b){ b.classList.remove('active'); });
+  btn.classList.add('active');
+  selectedDay = idx;
+  selectedSlot = null;
+  buildTimeSlots(idx);
+}
+
+function buildTimeSlots(idx){
+  var days = getDays();
+  var slots = getSlots(days[idx]);
+  var hasAvail = slots.some(function(s){ return !s.disabled; });
+  var html = '';
+  if(!hasAvail){
+    html = '<div class="no-slots-msg">Tidak ada slot tersedia untuk hari ini. Pilih besok ya!</div>';
+  } else {
+    slots.forEach(function(s){
+      if(s.disabled) return;
+      html += '<button class="time-btn" onclick="selectSlot(\''+s.label+'\',this)">'+s.label+'</button>';
+    });
+  }
+  document.getElementById('timeSlots').innerHTML = html;
+}
+
+function selectSlot(val, btn){
+  document.querySelectorAll('.time-btn').forEach(function(b){ b.classList.remove('active'); });
+  btn.classList.add('active');
+  selectedSlot = val;
+}
+
+function getPickupLabel(){
+  if(selectedSlot === null) return null;
+  var days = getDays();
+  var d = days[selectedDay];
+  var dayLabel = selectedDay===0 ? 'Hari Ini' : 'Besok';
+  return dayLabel+', '+DAYS_ID[d.getDay()]+' '+d.getDate()+' '+MONTHS_ID[d.getMonth()]+' - Pukul '+selectedSlot;
+}
+
+// --- INIT ---
 window.onload = function(){
   initAvailability();
   buildPopup();
+  buildDayRow();
 };
 
 function initAvailability(){
@@ -988,7 +1270,7 @@ function initAvailability(){
       el.querySelectorAll('.qty-btn,.size-btn').forEach(function(b){ b.disabled=true; });
       var tag = document.createElement('div');
       tag.className = 'unavailable-tag';
-      tag.innerHTML = '⊘ Belum tersedia';
+      tag.textContent = 'Belum tersedia';
       el.querySelector('.item-info').appendChild(tag);
     }
   });
@@ -997,11 +1279,11 @@ function initAvailability(){
 function buildPopup(){
   var av='', unav='';
   menu.forEach(function(m){
-    var sz = m.s ? ' <span style="opacity:0.6;font-size:0.9em">(R/B)</span>' : '';
+    var sz = m.s ? ' (R/B)' : '';
     if(m.a) av += '<div class="pop-item">'+m.n+sz+'</div>';
     else unav += '<div class="pop-item">'+m.n+sz+'</div>';
   });
-  document.getElementById('availableList').innerHTML = av || '<div class="pop-item" style="opacity:0.5">—</div>';
+  document.getElementById('availableList').innerHTML = av || '<div class="pop-item" style="opacity:0.5">-</div>';
   document.getElementById('unavailableList').innerHTML = unav || '<div class="pop-item" style="opacity:0.5">Semua menu tersedia</div>';
 }
 
@@ -1012,8 +1294,7 @@ function changeQty(i, c){
   var nq = Math.max(0, ord[i].q + c);
   ord[i].q = nq;
   document.getElementById('qty-'+i).textContent = nq;
-  var el = document.getElementById('item-'+i);
-  el.classList.toggle('selected', nq > 0);
+  document.getElementById('item-'+i).classList.toggle('selected', nq > 0);
   updateSummary();
 }
 
@@ -1048,23 +1329,31 @@ function handleOrder(){
   if(!nm){ alert('Masukkan nama pemesan dulu ya!'); document.getElementById('customerName').focus(); return; }
   var has = ord.some(function(o){ return o.q>0; });
   if(!has){ alert('Pilih menu dulu ya!'); return; }
+  if(!selectedSlot){ alert('Pilih jam pengambilan dulu ya!'); return; }
   showConfirm(nm);
 }
 
 function showConfirm(nm){
   document.getElementById('modalName').textContent = nm;
   var catatan = document.getElementById('orderNotes').value.trim();
+  var pickup = getPickupLabel();
+  document.getElementById('modalPickup').textContent = pickup ? 'Ambil: ' + pickup : '';
   var html='', tot=0;
   ord.forEach(function(o,i){
     if(o.q>0){
       var m=menu[i], pr=getPrice(i), st=o.q*pr;
       tot+=st;
-      var dn=m.s ? m.n+' ('+o.z+')' : m.n;
-      html+='<div class="order-row"><div><div class="order-row-name">'+dn+'</div><div class="order-row-qty">'+o.q+' x Rp '+pr.toLocaleString('id-ID')+'</div></div><div class="order-row-price">Rp '+st.toLocaleString('id-ID')+'</div></div>';
+      var dn = m.s ? m.n+' ('+o.z+')' : m.n;
+      html += '<div class="order-row">'
+            + '<div><div class="order-row-name">'+dn+'</div>'
+            + '<div class="order-row-qty">'+o.q+' x Rp '+pr.toLocaleString('id-ID')+'</div></div>'
+            + '<div class="order-row-price">Rp '+st.toLocaleString('id-ID')+'</div></div>';
     }
   });
   if(catatan){
-    html+='<div style="margin-top:12px;padding:10px 12px;background:#1a1710;border-radius:8px;border-left:2px solid var(--gold-dim);"><div style="font-size:0.75em;color:var(--muted);margin-bottom:3px;letter-spacing:0.5px;text-transform:uppercase;">Catatan</div><div style="font-size:0.88em;color:var(--text);">'+catatan+'</div></div>';
+    html += '<div style="margin-top:12px;padding:10px 12px;background:#1a1710;border-radius:8px;border-left:2px solid var(--gold-dim);">'
+          + '<div style="font-size:0.75em;color:var(--muted);margin-bottom:3px;letter-spacing:0.5px;text-transform:uppercase;">Catatan</div>'
+          + '<div style="font-size:0.88em;color:var(--text);">'+catatan+'</div></div>';
   }
   document.getElementById('modalItems').innerHTML = html;
   document.getElementById('modalTotal').textContent = 'Rp '+tot.toLocaleString('id-ID');
@@ -1076,29 +1365,35 @@ function closeModal(){ document.getElementById('confirmOverlay').classList.remov
 function sendToWhatsApp(){
   var nm = document.getElementById('customerName').value.trim();
   var catatan = document.getElementById('orderNotes').value.trim();
+  var pickup = getPickupLabel() || '-';
   var sep = '-----------------------------';
-  var msg = '*PESANAN BARU - RENJANA*\n';
-  msg += sep + '\n';
-  msg += 'Nama   : *' + nm + '*\n';
-  if(catatan) {
-    msg += 'Catatan: ' + catatan + '\n';
-  }
-  msg += sep + '\n\n';
-  msg += '*Detail Pesanan:*\n';
+  var msg = '*PESANAN BARU - RENJANA*\n'
+          + sep + '\n'
+          + 'Nama        : *' + nm + '*\n'
+          + 'Pengambilan : ' + pickup + '\n'
+          + 'Catatan     : ' + (catatan || '-') + '\n'
+          + sep + '\n\n'
+          + '*Detail Pesanan:*\n';
   var tot=0, no=1;
   ord.forEach(function(o,i){
     if(o.q>0){
       var m=menu[i], pr=getPrice(i), st=o.q*pr, dn=m.s?m.n+' ('+o.z+')':m.n;
       tot+=st;
-      msg += no+'. '+dn+'\n';
-      msg += '   '+o.q+' x Rp '+pr.toLocaleString('id-ID')+' = Rp '+st.toLocaleString('id-ID')+'\n';
+      msg += no+'. '+dn+'\n   '+o.q+' x Rp '+pr.toLocaleString('id-ID')+' = Rp '+st.toLocaleString('id-ID')+'\n';
       no++;
     }
   });
-  msg += '\n' + sep + '\n';
-  msg += 'TOTAL: *Rp '+tot.toLocaleString('id-ID')+'*\n';
-  msg += sep;
-  window.location.href='https://wa.me/62895352138648?text='+encodeURIComponent(msg);
+  msg += '\n'+sep+'\nTOTAL : *Rp '+tot.toLocaleString('id-ID')+'*\n'+sep;
+
+  closeModal();
+  document.getElementById('payOverlay').classList.add('active');
+  setTimeout(function(){
+    window.open('https://wa.me/62895352138648?text='+encodeURIComponent(msg), '_blank');
+  }, 500);
+}
+
+function closePay(){
+  document.getElementById('payOverlay').classList.remove('active');
 }
 </script>
 </body>
