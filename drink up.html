@@ -1,515 +1,1105 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Renjana - Menu Digital</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 20px; }
-        .container { max-width: 600px; margin: 0 auto; background: white; border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); overflow: hidden; }
-        .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px 20px; text-align: center; }
-        .header h1 { font-size: 2.5em; margin-bottom: 10px; text-shadow: 2px 2px 4px rgba(0,0,0,0.2); }
-        .header p { font-size: 1.1em; opacity: 0.9; }
-        .content { padding: 20px; }
-        .customer-info { background: #f8f9fa; padding: 20px; border-radius: 15px; margin-bottom: 25px; }
-        .customer-info label { display: block; font-weight: 600; color: #333; margin-bottom: 8px; font-size: 1.1em; }
-        .customer-info input { width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 10px; font-size: 1em; }
-        .customer-info input:focus { outline: none; border-color: #667eea; }
-        .category { margin-bottom: 30px; }
-        .category-header { font-size: 1.5em; color: #333; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 3px solid #667eea; }
-        .menu-item { background: #f8f9fa; padding: 15px; margin-bottom: 12px; border-radius: 12px; transition: all 0.3s; border: 2px solid transparent; position: relative; }
-        .menu-item:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
-        .menu-item.selected { border-color: #667eea; background: #e8eaf6; }
-        .menu-item.unavailable { opacity: 0.5; }
-        .unavailable-badge { position: absolute; top: 10px; right: 10px; background: #dc3545; color: white; padding: 5px 10px; border-radius: 20px; font-size: 0.85em; font-weight: 600; }
-        .unavailable .qty-btn, .unavailable .size-btn { cursor: not-allowed !important; opacity: 0.5; }
-        .item-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-        .item-info { flex: 1; }
-        .item-name { font-weight: 600; color: #333; font-size: 1.1em; margin-bottom: 5px; }
-        .item-price { color: #667eea; font-weight: 700; font-size: 1em; }
-        .item-controls { display: flex; align-items: center; gap: 10px; }
-        .qty-btn { width: 35px; height: 35px; border: none; background: #667eea; color: white; border-radius: 50%; font-size: 1.2em; cursor: pointer; transition: all 0.3s; }
-        .qty-btn:hover { background: #5568d3; transform: scale(1.1); }
-        .qty-btn:active { transform: scale(0.95); }
-        .qty-btn:disabled { background: #ccc; cursor: not-allowed; }
-        .qty-display { min-width: 40px; text-align: center; font-weight: 700; font-size: 1.2em; color: #333; }
-        .size-options { display: flex; gap: 10px; }
-        .size-btn { flex: 1; padding: 8px; border: 2px solid #ddd; background: white; border-radius: 8px; cursor: pointer; transition: all 0.3s; font-weight: 600; }
-        .size-btn.active { background: #667eea; color: white; border-color: #667eea; }
-        .size-btn:disabled { background: #f0f0f0; cursor: not-allowed; }
-        .summary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 15px; margin: 20px 0; display: none; }
-        .summary.show { display: block; }
-        .summary-row { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 1.1em; }
-        .summary-total { font-size: 1.5em; font-weight: 700; padding-top: 15px; border-top: 2px solid rgba(255,255,255,0.3); margin-top: 10px; }
-        .order-btn { width: 100%; padding: 18px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 12px; font-size: 1.3em; font-weight: 700; cursor: pointer; transition: all 0.3s; text-transform: uppercase; letter-spacing: 1px; }
-        .order-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4); }
-        .order-btn:disabled { background: #ccc; cursor: not-allowed; }
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 1000; align-items: center; justify-content: center; padding: 20px; }
-        .modal.active { display: flex; }
-        .modal-content { background: white; padding: 30px; border-radius: 20px; max-width: 500px; width: 100%; max-height: 80vh; overflow-y: auto; }
-        .modal-header { font-size: 1.8em; color: #333; margin-bottom: 20px; text-align: center; font-weight: 700; }
-        .order-detail { background: #f8f9fa; padding: 15px; border-radius: 10px; margin-bottom: 15px; }
-        .order-item { display: flex; justify-content: space-between; margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid #ddd; }
-        .order-item:last-child { border-bottom: none; margin-bottom: 0; }
-        .modal-buttons { display: flex; gap: 10px; margin-top: 20px; }
-        .modal-btn { flex: 1; padding: 15px; border: none; border-radius: 10px; font-size: 1.1em; font-weight: 600; cursor: pointer; transition: all 0.3s; }
-        .confirm-btn { background: #28a745; color: white; }
-        .confirm-btn:hover { background: #218838; }
-        .cancel-btn { background: #dc3545; color: white; }
-        .cancel-btn:hover { background: #c82333; }
-        .popup-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 2000; align-items: center; justify-content: center; padding: 20px; }
-        .popup-overlay.active { display: flex; }
-        .popup-content { background: white; padding: 30px; border-radius: 20px; max-width: 500px; width: 100%; max-height: 80vh; overflow-y: auto; }
-        .popup-header { font-size: 1.8em; color: #333; margin-bottom: 20px; text-align: center; font-weight: 700; }
-        .popup-section { margin-bottom: 20px; }
-        .popup-section-title { font-size: 1.2em; font-weight: 700; margin-bottom: 10px; padding: 10px; border-radius: 8px; }
-        .available-section { background: #d4edda; color: #155724; }
-        .unavailable-section { background: #f8d7da; color: #721c24; }
-        .popup-item { padding: 8px 12px; margin: 5px 0; background: #f8f9fa; border-radius: 8px; font-size: 0.95em; }
-        .popup-close-btn { width: 100%; padding: 15px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 10px; font-size: 1.2em; font-weight: 600; cursor: pointer; margin-top: 10px; }
-        .popup-close-btn:hover { opacity: 0.9; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Renjana — Menu Digital</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f0d0a;
+    --surface: #1a1710;
+    --card: #211f19;
+    --card-hover: #2a2820;
+    --gold: #c9a84c;
+    --gold-light: #e8c96a;
+    --gold-dim: #8a6f2e;
+    --cream: #f5eed8;
+    --muted: #7a7265;
+    --text: #e8dfc8;
+    --green: #4caf7d;
+    --red: #e05555;
+    --selected-bg: #1e1c12;
+    --selected-border: #c9a84c;
+  }
+  *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding-bottom: 120px;
+  }
+
+  /* NOISE TEXTURE OVERLAY */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 0; opacity: 0.4;
+  }
+
+  .wrapper { max-width: 520px; margin: 0 auto; padding: 0 16px; position: relative; z-index: 1; }
+
+  /* HEADER */
+  .hero {
+    text-align: center;
+    padding: 48px 20px 36px;
+    position: relative;
+  }
+  .hero::after {
+    content: '';
+    display: block;
+    width: 60px; height: 2px;
+    background: var(--gold);
+    margin: 18px auto 0;
+  }
+  .hero-badge {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--gold);
+    border: 1px solid var(--gold-dim);
+    padding: 5px 14px;
+    border-radius: 20px;
+    margin-bottom: 16px;
+    opacity: 0.85;
+  }
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.8em, 8vw, 3.8em);
+    font-weight: 900;
+    color: var(--cream);
+    letter-spacing: -1px;
+    line-height: 1;
+  }
+  .hero h1 span { color: var(--gold); }
+  .hero p {
+    margin-top: 10px;
+    font-size: 0.95em;
+    color: var(--muted);
+    font-weight: 300;
+    letter-spacing: 0.5px;
+  }
+
+  /* CUSTOMER INPUT */
+  .name-field {
+    background: var(--surface);
+    border: 1px solid #2e2b22;
+    border-radius: 14px;
+    padding: 18px 20px;
+    margin-bottom: 32px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transition: border-color 0.3s;
+  }
+  .name-field:focus-within { border-color: var(--gold-dim); }
+  .name-field .icon { font-size: 1.1em; opacity: 0.6; flex-shrink: 0; }
+  .name-field input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--text);
+    font-size: 1em;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 400;
+  }
+  .name-field input::placeholder { color: var(--muted); }
+
+  /* NOTES FIELD */
+  .notes-field {
+    background: var(--surface);
+    border: 1px solid #2e2b22;
+    border-radius: 14px;
+    padding: 14px 20px;
+    margin-bottom: 32px;
+    transition: border-color 0.3s;
+  }
+  .notes-field:focus-within { border-color: var(--gold-dim); }
+  .notes-field-top {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+  .notes-field-top .icon { font-size: 1em; opacity: 0.6; }
+  .notes-field-top label {
+    font-size: 0.88em;
+    color: var(--muted);
+    font-weight: 500;
+  }
+  .notes-field-top .optional-tag {
+    font-size: 0.72em;
+    background: #2a2720;
+    color: var(--muted);
+    padding: 2px 8px;
+    border-radius: 6px;
+    letter-spacing: 0.5px;
+  }
+  .notes-field textarea {
+    width: 100%;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--text);
+    font-size: 0.9em;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 400;
+    resize: none;
+    min-height: 52px;
+    line-height: 1.6;
+  }
+  .notes-field textarea::placeholder { color: #45423a; }
+
+  /* CATEGORY */
+  .category { margin-bottom: 36px; }
+  .category-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #2a2720;
+  }
+  .category-label .icon { font-size: 1.1em; }
+  .category-label h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3em;
+    font-weight: 700;
+    color: var(--cream);
+    letter-spacing: 0.3px;
+  }
+  .category-label .line {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(to right, #2e2b22, transparent);
+  }
+
+  /* MENU ITEM */
+  .menu-item {
+    background: var(--card);
+    border: 1px solid #2a2720;
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin-bottom: 8px;
+    transition: all 0.25s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  .menu-item::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: var(--gold);
+    transform: scaleY(0);
+    transition: transform 0.25s ease;
+    border-radius: 3px 0 0 3px;
+  }
+  .menu-item:hover { background: var(--card-hover); border-color: #3a3720; }
+  .menu-item.selected { background: var(--selected-bg); border-color: var(--selected-border); }
+  .menu-item.selected::before { transform: scaleY(1); }
+  .menu-item.unavailable { opacity: 0.4; }
+  .menu-item.unavailable .qty-btn { cursor: not-allowed; }
+
+  .item-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .item-info { flex: 1; min-width: 0; }
+  .item-name {
+    font-size: 0.95em;
+    font-weight: 600;
+    color: var(--cream);
+    margin-bottom: 3px;
+    line-height: 1.3;
+  }
+  .item-desc {
+    font-size: 0.78em;
+    color: var(--muted);
+    margin-bottom: 4px;
+    line-height: 1.4;
+  }
+  .item-price {
+    font-size: 0.85em;
+    font-weight: 600;
+    color: var(--gold);
+  }
+  .unavailable-tag {
+    font-size: 0.72em;
+    color: var(--red);
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 2px;
+  }
+
+  /* QTY CONTROLS */
+  .qty-wrap {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+  .qty-btn {
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    border: 1.5px solid var(--gold-dim);
+    background: transparent;
+    color: var(--gold);
+    font-size: 1.1em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex; align-items: center; justify-content: center;
+    line-height: 1;
+  }
+  .qty-btn:hover:not(:disabled) { background: var(--gold); color: var(--bg); border-color: var(--gold); }
+  .qty-btn:disabled { border-color: #333; color: #444; cursor: not-allowed; }
+  .qty-num {
+    min-width: 22px;
+    text-align: center;
+    font-size: 1em;
+    font-weight: 700;
+    color: var(--cream);
+  }
+
+  /* SIZE OPTIONS */
+  .size-opts {
+    display: flex;
+    gap: 7px;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid #2a2720;
+  }
+  .size-btn {
+    flex: 1;
+    padding: 6px 10px;
+    background: transparent;
+    border: 1.5px solid #3a3720;
+    border-radius: 8px;
+    color: var(--muted);
+    font-size: 0.8em;
+    font-weight: 600;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: center;
+  }
+  .size-btn.active { background: var(--gold); color: var(--bg); border-color: var(--gold); }
+  .size-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+  /* SUMMARY BAR */
+  .summary-bar {
+    display: none;
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    background: var(--surface);
+    border-top: 1px solid #2a2720;
+    padding: 16px;
+    z-index: 100;
+  }
+  .summary-bar.show { display: block; }
+  .summary-inner {
+    max-width: 520px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .summary-info { flex: 1; }
+  .summary-count {
+    font-size: 0.8em;
+    color: var(--muted);
+    margin-bottom: 2px;
+  }
+  .summary-total {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3em;
+    font-weight: 700;
+    color: var(--gold);
+  }
+  .order-btn {
+    background: var(--gold);
+    color: var(--bg);
+    border: none;
+    border-radius: 12px;
+    padding: 13px 24px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.95em;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: all 0.25s;
+    white-space: nowrap;
+  }
+  .order-btn:hover { background: var(--gold-light); transform: translateY(-1px); }
+  .order-btn:disabled { background: #333; color: #555; cursor: not-allowed; transform: none; }
+
+  /* MODALS */
+  .overlay {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.8);
+    backdrop-filter: blur(4px);
+    z-index: 200;
+    align-items: flex-end;
+    justify-content: center;
+    padding: 0;
+  }
+  .overlay.active { display: flex; }
+  .sheet {
+    background: var(--surface);
+    border-radius: 24px 24px 0 0;
+    border-top: 1px solid #2e2b22;
+    padding: 28px 20px 36px;
+    width: 100%;
+    max-width: 520px;
+    max-height: 85vh;
+    overflow-y: auto;
+    animation: slideUp 0.3s ease;
+  }
+  @keyframes slideUp { from { transform: translateY(30px); opacity:0; } to { transform: translateY(0); opacity:1; } }
+  .sheet-handle {
+    width: 36px; height: 4px;
+    background: #3a3720;
+    border-radius: 2px;
+    margin: 0 auto 20px;
+  }
+  .sheet-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5em;
+    font-weight: 700;
+    color: var(--cream);
+    margin-bottom: 20px;
+    text-align: center;
+  }
+
+  /* POPUP MENU LIST */
+  .pop-section { margin-bottom: 18px; }
+  .pop-section-title {
+    font-size: 0.78em;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 6px 12px;
+    border-radius: 8px;
+    margin-bottom: 8px;
+  }
+  .pop-available { background: rgba(76,175,125,0.12); color: var(--green); }
+  .pop-unavailable { background: rgba(224,85,85,0.1); color: var(--red); }
+  .pop-item {
+    font-size: 0.88em;
+    color: var(--muted);
+    padding: 5px 12px;
+    line-height: 1.5;
+  }
+  .pop-start-btn {
+    width: 100%;
+    padding: 15px;
+    background: var(--gold);
+    color: var(--bg);
+    border: none;
+    border-radius: 12px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1em;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 6px;
+    letter-spacing: 0.5px;
+    transition: background 0.2s;
+  }
+  .pop-start-btn:hover { background: var(--gold-light); }
+
+  /* CONFIRM MODAL */
+  .order-name-label {
+    text-align: center;
+    font-size: 0.9em;
+    color: var(--muted);
+    margin-bottom: 16px;
+  }
+  .order-name-label strong { color: var(--cream); }
+  .order-items { margin-bottom: 16px; }
+  .order-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 10px 0;
+    border-bottom: 1px solid #2a2720;
+    gap: 10px;
+  }
+  .order-row:last-child { border-bottom: none; }
+  .order-row-name { font-size: 0.9em; color: var(--text); font-weight: 500; }
+  .order-row-qty { font-size: 0.82em; color: var(--muted); margin-top: 2px; }
+  .order-row-price { font-size: 0.9em; font-weight: 700; color: var(--gold); white-space: nowrap; }
+  .order-total-bar {
+    display: flex;
+    justify-content: space-between;
+    padding: 14px 0 4px;
+    border-top: 1px solid var(--gold-dim);
+    margin-top: 6px;
+  }
+  .order-total-label { font-size: 0.9em; color: var(--muted); font-weight: 500; }
+  .order-total-val {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4em;
+    font-weight: 700;
+    color: var(--gold);
+  }
+  .modal-btns { display: flex; gap: 10px; margin-top: 20px; }
+  .btn-cancel {
+    flex: 1;
+    padding: 14px;
+    background: transparent;
+    border: 1.5px solid #3a3720;
+    color: var(--muted);
+    border-radius: 12px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.95em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-cancel:hover { border-color: var(--muted); color: var(--text); }
+  .btn-wa {
+    flex: 2;
+    padding: 14px;
+    background: #25d366;
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.95em;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .btn-wa:hover { background: #20bc5a; }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: #2e2b22; border-radius: 2px; }
+</style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>☕ Renjana</h1>
-            <p>Pilih Menu Favoritmu!</p>
-        </div>
-        <div class="content">
-            <div class="customer-info">
-                <label>📝 Nama Pemesan:</label>
-                <input type="text" id="customerName" placeholder="Masukkan nama Anda...">
-            </div>
-            <div class="category">
-                <div class="category-header">☕ Coffee</div>
-                <div class="menu-item" id="item-0">
-                    <div class="item-header">
-                        <div class="item-info">
-                            <div class="item-name">Renjana Aren Latte</div>
-                            <div class="item-price">Rp 8.000</div>
-                        </div>
-                        <div class="item-controls">
-                            <button class="qty-btn" onclick="changeQty(0,-1)">−</button>
-                            <div class="qty-display" id="qty-0">0</div>
-                            <button class="qty-btn" onclick="changeQty(0,1)">+</button>
-                        </div>
-                    </div>
-                </div>
-                <div class="menu-item" id="item-1">
-                    <div class="item-header">
-                        <div class="item-info">
-                            <div class="item-name">Renjana Hazelnut Coffee</div>
-                            <div class="item-price">Rp 10.000</div>
-                        </div>
-                        <div class="item-controls">
-                            <button class="qty-btn" onclick="changeQty(1,-1)">−</button>
-                            <div class="qty-display" id="qty-1">0</div>
-                            <button class="qty-btn" onclick="changeQty(1,1)">+</button>
-                        </div>
-                    </div>
-                </div>
-                <div class="menu-item" id="item-2">
-                    <div class="item-header">
-                        <div class="item-info">
-                            <div class="item-name">Renjana Americano</div>
-                            <div class="item-price">Rp 6.000</div>
-                        </div>
-                        <div class="item-controls">
-                            <button class="qty-btn" onclick="changeQty(2,-1)">−</button>
-                            <div class="qty-display" id="qty-2">0</div>
-                            <button class="qty-btn" onclick="changeQty(2,1)">+</button>
-                        </div>
-                    </div>
-                </div>
-                <div class="menu-item" id="item-3">
-                    <div class="item-header">
-                        <div class="item-info">
-                            <div class="item-name">Renjana Cappuccino</div>
-                            <div class="item-price">Rp 8.000</div>
-                        </div>
-                        <div class="item-controls">
-                            <button class="qty-btn" onclick="changeQty(3,-1)">−</button>
-                            <div class="qty-display" id="qty-3">0</div>
-                            <button class="qty-btn" onclick="changeQty(3,1)">+</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="category">
-                <div class="category-header">🧋 DrinkUp with Renjana</div>
-                <div class="menu-item" id="item-4">
-                    <div class="item-header">
-                        <div class="item-info">
-                            <div class="item-name">Stickymilk Matcha</div>
-                            <div class="item-price">Reguler: Rp 8.000 | Big: Rp 10.000</div>
-                        </div>
-                        <div class="item-controls">
-                            <button class="qty-btn" onclick="changeQty(4,-1)">−</button>
-                            <div class="qty-display" id="qty-4">0</div>
-                            <button class="qty-btn" onclick="changeQty(4,1)">+</button>
-                        </div>
-                    </div>
-                    <div class="size-options">
-                        <button class="size-btn active" onclick="changeSize(4,'reguler',this)">Reguler</button>
-                        <button class="size-btn" onclick="changeSize(4,'big',this)">Big</button>
-                    </div>
-                </div>
-                <div class="menu-item" id="item-5">
-                    <div class="item-header">
-                        <div class="item-info">
-                            <div class="item-name">Stickymilk Coklat</div>
-                            <div class="item-price">Reguler: Rp 8.000 | Big: Rp 10.000</div>
-                        </div>
-                        <div class="item-controls">
-                            <button class="qty-btn" onclick="changeQty(5,-1)">−</button>
-                            <div class="qty-display" id="qty-5">0</div>
-                            <button class="qty-btn" onclick="changeQty(5,1)">+</button>
-                        </div>
-                    </div>
-                    <div class="size-options">
-                        <button class="size-btn active" onclick="changeSize(5,'reguler',this)">Reguler</button>
-                        <button class="size-btn" onclick="changeSize(5,'big',this)">Big</button>
-                    </div>
-                </div>
-                <div class="menu-item" id="item-6">
-                    <div class="item-header">
-                        <div class="item-info">
-                            <div class="item-name">Stickymilk Taro</div>
-                            <div class="item-price">Reguler: Rp 8.000 | Big: Rp 10.000</div>
-                        </div>
-                        <div class="item-controls">
-                            <button class="qty-btn" onclick="changeQty(6,-1)">−</button>
-                            <div class="qty-display" id="qty-6">0</div>
-                            <button class="qty-btn" onclick="changeQty(6,1)">+</button>
-                        </div>
-                    </div>
-                    <div class="size-options">
-                        <button class="size-btn active" onclick="changeSize(6,'reguler',this)">Reguler</button>
-                        <button class="size-btn" onclick="changeSize(6,'big',this)">Big</button>
-                    </div>
-                </div>
-                <div class="menu-item" id="item-7">
-                    <div class="item-header">
-                        <div class="item-info">
-                            <div class="item-name">Stickymilk Hazelnut</div>
-                            <div class="item-price">Reguler: Rp 8.000 | Big: Rp 10.000</div>
-                        </div>
-                        <div class="item-controls">
-                            <button class="qty-btn" onclick="changeQty(7,-1)">−</button>
-                            <div class="qty-display" id="qty-7">0</div>
-                            <button class="qty-btn" onclick="changeQty(7,1)">+</button>
-                        </div>
-                    </div>
-                    <div class="size-options">
-                        <button class="size-btn active" onclick="changeSize(7,'reguler',this)">Reguler</button>
-                        <button class="size-btn" onclick="changeSize(7,'big',this)">Big</button>
-                    </div>
-                </div>
-                <div class="menu-item" id="item-8">
-                    <div class="item-header">
-                        <div class="item-info">
-                            <div class="item-name">Stickymilk Permen Karet</div>
-                            <div class="item-price">Reguler: Rp 8.000 | Big: Rp 10.000</div>
-                        </div>
-                        <div class="item-controls">
-                            <button class="qty-btn" onclick="changeQty(8,-1)">−</button>
-                            <div class="qty-display" id="qty-8">0</div>
-                            <button class="qty-btn" onclick="changeQty(8,1)">+</button>
-                        </div>
-                    </div>
-                    <div class="size-options">
-                        <button class="size-btn active" onclick="changeSize(8,'reguler',this)">Reguler</button>
-                        <button class="size-btn" onclick="changeSize(8,'big',this)">Big</button>
-                    </div>
-                </div>
-                <div class="menu-item" id="item-9">
-                    <div class="item-header">
-                        <div class="item-info">
-                            <div class="item-name">Stickymilk Strawberry</div>
-                            <div class="item-price">Reguler: Rp 8.000 | Big: Rp 10.000</div>
-                        </div>
-                        <div class="item-controls">
-                            <button class="qty-btn" onclick="changeQty(9,-1)">−</button>
-                            <div class="qty-display" id="qty-9">0</div>
-                            <button class="qty-btn" onclick="changeQty(9,1)">+</button>
-                        </div>
-                    </div>
-                    <div class="size-options">
-                        <button class="size-btn active" onclick="changeSize(9,'reguler',this)">Reguler</button>
-                        <button class="size-btn" onclick="changeSize(9,'big',this)">Big</button>
-                    </div>
-                </div>
-                <div class="menu-item" id="item-10">
-                    <div class="item-header">
-                        <div class="item-info">
-                            <div class="item-name">Stickymilk Red Velvet</div>
-                            <div class="item-price">Reguler: Rp 8.000 | Big: Rp 10.000</div>
-                        </div>
-                        <div class="item-controls">
-                            <button class="qty-btn" onclick="changeQty(10,-1)">−</button>
-                            <div class="qty-display" id="qty-10">0</div>
-                            <button class="qty-btn" onclick="changeQty(10,1)">+</button>
-                        </div>
-                    </div>
-                    <div class="size-options">
-                        <button class="size-btn active" onclick="changeSize(10,'reguler',this)">Reguler</button>
-                        <button class="size-btn" onclick="changeSize(10,'big',this)">Big</button>
-                    </div>
-                </div>
-            </div>
-            <div class="category">
-                <div class="category-header">🍃 Tea</div>
-                <div class="menu-item" id="item-11">
-                    <div class="item-header">
-                        <div class="item-info">
-                            <div class="item-name">Es Teh Renjana</div>
-                            <div class="item-price">Rp 3.000</div>
-                        </div>
-                        <div class="item-controls">
-                            <button class="qty-btn" onclick="changeQty(11,-1)">−</button>
-                            <div class="qty-display" id="qty-11">0</div>
-                            <button class="qty-btn" onclick="changeQty(11,1)">+</button>
-                        </div>
-                    </div>
-                </div>
-                <div class="menu-item" id="item-12">
-                    <div class="item-header">
-                        <div class="item-info">
-                            <div class="item-name">Thai Tea Renjana</div>
-                            <div class="item-price">Rp 8.000</div>
-                        </div>
-                        <div class="item-controls">
-                            <button class="qty-btn" onclick="changeQty(12,-1)">−</button>
-                            <div class="qty-display" id="qty-12">0</div>
-                            <button class="qty-btn" onclick="changeQty(12,1)">+</button>
-                        </div>
-                    </div>
-                </div>
-                <div class="menu-item" id="item-13">
-                    <div class="item-header">
-                        <div class="item-info">
-                            <div class="item-name">Teh Tarik Renjana</div>
-                            <div class="item-price">Rp 8.000</div>
-                        </div>
-                        <div class="item-controls">
-                            <button class="qty-btn" onclick="changeQty(13,-1)">−</button>
-                            <div class="qty-display" id="qty-13">0</div>
-                            <button class="qty-btn" onclick="changeQty(13,1)">+</button>
-                        </div>
-                    </div>
-                </div>
-                <div class="menu-item" id="item-14">
-                    <div class="item-header">
-                        <div class="item-info">
-                            <div class="item-name">Teh Milk Renjana</div>
-                            <div class="item-price">Rp 8.000</div>
-                        </div>
-                        <div class="item-controls">
-                            <button class="qty-btn" onclick="changeQty(14,-1)">−</button>
-                            <div class="qty-display" id="qty-14">0</div>
-                            <button class="qty-btn" onclick="changeQty(14,1)">+</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="summary" id="summary">
-                <div class="summary-row">
-                    <span>Total Item:</span>
-                    <span id="totalItems">0</span>
-                </div>
-                <div class="summary-row summary-total">
-                    <span>Total Harga:</span>
-                    <span id="totalPrice">Rp 0</span>
-                </div>
-            </div>
-            <button class="order-btn" id="orderBtn" disabled onclick="handleOrder()">Pesan Sekarang</button>
-        </div>
+
+<div class="wrapper">
+  <div class="hero">
+    <div class="hero-badge">Menu Digital</div>
+    <h1>Ren<span>jana</span></h1>
+    <p>Pilih favoritmu & pesan langsung</p>
+  </div>
+
+  <div class="name-field">
+    <span class="icon">&#128100;</span>
+    <input type="text" id="customerName" placeholder="Nama pemesan...">
+  </div>
+
+  <div class="notes-field">
+    <div class="notes-field-top">
+      <span class="icon">&#128221;</span>
+      <label for="orderNotes">Catatan Pesanan</label>
+      <span class="optional-tag">opsional</span>
     </div>
-    <div class="modal" id="confirmModal">
-        <div class="modal-content">
-            <div class="modal-header">📋 Konfirmasi Pesanan</div>
-            <div class="order-detail">
-                <p style="font-weight:600;margin-bottom:10px;">Nama: <span id="modalName"></span></p>
-                <div id="modalItems"></div>
-                <div style="margin-top:15px;padding-top:15px;border-top:2px solid #ddd;font-size:1.3em;font-weight:700;color:#667eea;">
-                    Total: <span id="modalTotal"></span>
-                </div>
-            </div>
-            <div class="modal-buttons">
-                <button class="modal-btn cancel-btn" onclick="closeModal()">Batal</button>
-                <button class="modal-btn confirm-btn" onclick="sendToWhatsApp()">Kirim ke WhatsApp</button>
-            </div>
-        </div>
+    <textarea id="orderNotes" placeholder="cth: es tehnya gulanya sedikit saja, kopinya jangan terlalu pahit..."></textarea>
+  </div>
+
+  <!-- COFFEE -->
+  <div class="category">
+    <div class="category-label">
+      <span class="icon">☕</span>
+      <h2>Coffee</h2>
+      <div class="line"></div>
     </div>
-    <div class="popup-overlay" id="menuPopup">
-        <div class="popup-content">
-            <div class="popup-header">🍹 Menu Hari Ini</div>
-            <div class="popup-section">
-                <div class="popup-section-title available-section">✅ Menu Tersedia</div>
-                <div id="availableList"></div>
-            </div>
-            <div class="popup-section">
-                <div class="popup-section-title unavailable-section">❌ Menu Belum Tersedia</div>
-                <div id="unavailableList"></div>
-            </div>
-            <button class="popup-close-btn" onclick="closePopup()">Mulai Pesan</button>
+    <div class="menu-item" id="item-0">
+      <div class="item-row">
+        <div class="item-info">
+          <div class="item-name">Renjana Americano</div>
+          <div class="item-price">Rp 5.000</div>
         </div>
+        <div class="qty-wrap">
+          <button class="qty-btn" onclick="changeQty(0,-1)">−</button>
+          <div class="qty-num" id="qty-0">0</div>
+          <button class="qty-btn" onclick="changeQty(0,1)">+</button>
+        </div>
+      </div>
     </div>
-    <script>
-        var menu=[
-            {n:"Renjana Aren Latte",p:8000,a:0},
-            {n:"Renjana Hazelnut Coffee",p:10000,a:0},
-            {n:"Renjana Americano",p:6000,a:0},
-            {n:"Renjana Cappuccino",p:8000,a:0},
-            {n:"Stickymilk Matcha",r:8000,b:10000,s:1,a:1},
-            {n:"Stickymilk Coklat",r:8000,b:10000,s:1,a:1},
-            {n:"Stickymilk Taro",r:8000,b:10000,s:1,a:1},
-            {n:"Stickymilk Hazelnut",r:8000,b:10000,s:1,a:1},
-            {n:"Stickymilk Permen Karet",r:8000,b:10000,s:1,a:1},
-            {n:"Stickymilk Strawberry",r:8000,b:10000,s:1,a:1},
-            {n:"Stickymilk Red Velvet",r:8000,b:10000,s:1,a:1},
-            {n:"Es Teh Renjana",p:3000,a:1},
-            {n:"Thai Tea Renjana",p:8000,a:0},
-            {n:"Teh Tarik Renjana",p:8000,a:0},
-            {n:"Teh Milk Renjana",p:8000,a:0}
-        ];
-        var ord=[];
-        for(var i=0;i<menu.length;i++)ord.push({q:0,z:'reguler'});
-        
-        window.onload=function(){
-            initMenuAvailability();
-            showPopup();
-        };
-        
-        function initMenuAvailability(){
-            for(var i=0;i<menu.length;i++){
-                if(!menu[i].a){
-                    var it=document.getElementById('item-'+i);
-                    it.classList.add('unavailable');
-                    var badge=document.createElement('div');
-                    badge.className='unavailable-badge';
-                    badge.textContent='❌ Menu belum tersedia';
-                    it.insertBefore(badge,it.firstChild);
-                    var btns=it.querySelectorAll('.qty-btn, .size-btn');
-                    for(var j=0;j<btns.length;j++){
-                        btns[j].disabled=true;
-                        btns[j].style.pointerEvents='none';
-                    }
-                }
-            }
-        }
-        
-        function showPopup(){
-            var av=[],unav=[];
-            for(var i=0;i<menu.length;i++){
-                var sz=menu[i].s?' (Reguler/Big)':'';
-                if(menu[i].a)av.push(menu[i].n+sz);
-                else unav.push(menu[i].n+sz);
-            }
-            var avList='';
-            for(var i=0;i<av.length;i++)avList+='<div class="popup-item">✅ '+av[i]+'</div>';
-            document.getElementById('availableList').innerHTML=avList;
-            var unavList='';
-            for(var i=0;i<unav.length;i++)unavList+='<div class="popup-item">❌ '+unav[i]+'</div>';
-            document.getElementById('unavailableList').innerHTML=unavList;
-            document.getElementById('menuPopup').classList.add('active');
-        }
-        
-        function closePopup(){
-            document.getElementById('menuPopup').classList.remove('active');
-        }
-        
-        function changeQty(i,c){
-            if(!menu[i].a)return;
-            var nq=ord[i].q+c;
-            if(nq<0)nq=0;
-            ord[i].q=nq;
-            document.getElementById('qty-'+i).textContent=nq;
-            var it=document.getElementById('item-'+i);
-            if(nq>0)it.classList.add('selected');
-            else it.classList.remove('selected');
-            updateSummary();
-        }
-        function changeSize(i,z,el){
-            if(!menu[i].a)return;
-            ord[i].z=z;
-            var p=el.parentNode;
-            var bs=p.querySelectorAll('.size-btn');
-            for(var j=0;j<bs.length;j++)bs[j].classList.remove('active');
-            el.classList.add('active');
-            updateSummary();
-        }
-        function updateSummary(){
-            var ti=0,tp=0;
-            for(var i=0;i<ord.length;i++){
-                if(ord[i].q>0){
-                    ti+=ord[i].q;
-                    var m=menu[i];
-                    var pr=m.s?(ord[i].z==='reguler'?m.r:m.b):m.p;
-                    tp+=ord[i].q*pr;
-                }
-            }
-            var s=document.getElementById('summary');
-            var ob=document.getElementById('orderBtn');
-            if(ti>0){
-                s.classList.add('show');
-                document.getElementById('totalItems').textContent=ti;
-                document.getElementById('totalPrice').textContent='Rp '+tp.toLocaleString('id-ID');
-                ob.disabled=false;
-            }else{
-                s.classList.remove('show');
-                ob.disabled=true;
-            }
-        }
-        function handleOrder(){
-            var nm=document.getElementById('customerName').value.trim();
-            if(!nm){alert('Silakan masukkan nama Anda terlebih dahulu!');document.getElementById('customerName').focus();return;}
-            var ho=false;
-            for(var i=0;i<ord.length;i++){if(ord[i].q>0){ho=true;break;}}
-            if(!ho){alert('Silakan pilih menu terlebih dahulu!');return;}
-            showConfirmModal(nm);
-        }
-        function showConfirmModal(nm){
-            document.getElementById('modalName').textContent=nm;
-            var ih='',tot=0;
-            for(var i=0;i<ord.length;i++){
-                if(ord[i].q>0){
-                    var m=menu[i];
-                    var pr=m.s?(ord[i].z==='reguler'?m.r:m.b):m.p;
-                    var dn=m.s?(m.n+' ('+ord[i].z+')'):m.n;
-                    var st=ord[i].q*pr;
-                    tot+=st;
-                    ih+='<div class="order-item"><div><strong>'+dn+'</strong><br>'+ord[i].q+' x Rp '+pr.toLocaleString('id-ID')+'</div><div style="font-weight:700;color:#667eea;">Rp '+st.toLocaleString('id-ID')+'</div></div>';
-                }
-            }
-            document.getElementById('modalItems').innerHTML=ih;
-            document.getElementById('modalTotal').textContent='Rp '+tot.toLocaleString('id-ID');
-            document.getElementById('confirmModal').classList.add('active');
-        }
-        function closeModal(){
-            document.getElementById('confirmModal').classList.remove('active');
-        }
-        function sendToWhatsApp(){
-            var nm=document.getElementById('customerName').value.trim();
-            var msg='🛍️ *PESANAN BARU - RENJANA*\n\n👤 Nama: *'+nm+'*\n\n📋 Detail Pesanan:\n━━━━━━━━━━━━━━━\n';
-            var tot=0;
-            for(var i=0;i<ord.length;i++){
-                if(ord[i].q>0){
-                    var m=menu[i];
-                    var pr=m.s?(ord[i].z==='reguler'?m.r:m.b):m.p;
-                    var dn=m.s?(m.n+' ('+ord[i].z+')'):m.n;
-                    var st=ord[i].q*pr;
-                    tot+=st;
-                    msg+=dn+'\n   '+ord[i].q+' x Rp '+pr.toLocaleString('id-ID')+' = Rp '+st.toLocaleString('id-ID')+'\n\n';
-                }
-            }
-            msg+='━━━━━━━━━━━━━━━\n💰 *TOTAL: Rp '+tot.toLocaleString('id-ID')+'*';
-            var wn='62895352138648';
-            window.location.href='https://wa.me/'+wn+'?text='+encodeURIComponent(msg);
-        }
-    </script>
+    <div class="menu-item" id="item-1">
+      <div class="item-row">
+        <div class="item-info">
+          <div class="item-name">Renjana Kopi Hitam</div>
+          <div class="item-price">Rp 5.000</div>
+        </div>
+        <div class="qty-wrap">
+          <button class="qty-btn" onclick="changeQty(1,-1)">−</button>
+          <div class="qty-num" id="qty-1">0</div>
+          <button class="qty-btn" onclick="changeQty(1,1)">+</button>
+        </div>
+      </div>
+    </div>
+    <div class="menu-item" id="item-2">
+      <div class="item-row">
+        <div class="item-info">
+          <div class="item-name">Renjana Cappuccino</div>
+          <div class="item-price">Rp 8.000</div>
+        </div>
+        <div class="qty-wrap">
+          <button class="qty-btn" onclick="changeQty(2,-1)">−</button>
+          <div class="qty-num" id="qty-2">0</div>
+          <button class="qty-btn" onclick="changeQty(2,1)">+</button>
+        </div>
+      </div>
+    </div>
+    <div class="menu-item" id="item-3">
+      <div class="item-row">
+        <div class="item-info">
+          <div class="item-name">Renjana Aren Latte</div>
+          <div class="item-price">Rp 8.000</div>
+        </div>
+        <div class="qty-wrap">
+          <button class="qty-btn" onclick="changeQty(3,-1)">−</button>
+          <div class="qty-num" id="qty-3">0</div>
+          <button class="qty-btn" onclick="changeQty(3,1)">+</button>
+        </div>
+      </div>
+    </div>
+    <div class="menu-item" id="item-4">
+      <div class="item-row">
+        <div class="item-info">
+          <div class="item-name">Good Day (All Varian)</div>
+          <div class="item-price">Rp 5.000</div>
+        </div>
+        <div class="qty-wrap">
+          <button class="qty-btn" onclick="changeQty(4,-1)">−</button>
+          <div class="qty-num" id="qty-4">0</div>
+          <button class="qty-btn" onclick="changeQty(4,1)">+</button>
+        </div>
+      </div>
+    </div>
+    <div class="menu-item" id="item-5">
+      <div class="item-row">
+        <div class="item-info">
+          <div class="item-name">Coffee Lainnya (All Varian)</div>
+          <div class="item-price">Rp 5.000</div>
+        </div>
+        <div class="qty-wrap">
+          <button class="qty-btn" onclick="changeQty(5,-1)">−</button>
+          <div class="qty-num" id="qty-5">0</div>
+          <button class="qty-btn" onclick="changeQty(5,1)">+</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- NON-COFFEE / DRINKUP -->
+  <div class="category">
+    <div class="category-label">
+      <span class="icon">🧋</span>
+      <h2>Non-Coffee</h2>
+      <div class="line"></div>
+    </div>
+
+    <div class="menu-item" id="item-6">
+      <div class="item-row">
+        <div class="item-info">
+          <div class="item-name">Sticky Milk Matcha</div>
+          <div class="item-price">Reguler Rp 8.000 &nbsp;·&nbsp; Big Rp 10.000</div>
+        </div>
+        <div class="qty-wrap">
+          <button class="qty-btn" onclick="changeQty(6,-1)">−</button>
+          <div class="qty-num" id="qty-6">0</div>
+          <button class="qty-btn" onclick="changeQty(6,1)">+</button>
+        </div>
+      </div>
+      <div class="size-opts">
+        <button class="size-btn active" onclick="changeSize(6,'reguler',this)">Reguler</button>
+        <button class="size-btn" onclick="changeSize(6,'big',this)">Big</button>
+      </div>
+    </div>
+
+    <div class="menu-item" id="item-7">
+      <div class="item-row">
+        <div class="item-info">
+          <div class="item-name">Sticky Milk Coklat</div>
+          <div class="item-price">Reguler Rp 8.000 &nbsp;·&nbsp; Big Rp 10.000</div>
+        </div>
+        <div class="qty-wrap">
+          <button class="qty-btn" onclick="changeQty(7,-1)">−</button>
+          <div class="qty-num" id="qty-7">0</div>
+          <button class="qty-btn" onclick="changeQty(7,1)">+</button>
+        </div>
+      </div>
+      <div class="size-opts">
+        <button class="size-btn active" onclick="changeSize(7,'reguler',this)">Reguler</button>
+        <button class="size-btn" onclick="changeSize(7,'big',this)">Big</button>
+      </div>
+    </div>
+
+    <div class="menu-item" id="item-8">
+      <div class="item-row">
+        <div class="item-info">
+          <div class="item-name">Sticky Milk Taro</div>
+          <div class="item-price">Reguler Rp 8.000 &nbsp;·&nbsp; Big Rp 10.000</div>
+        </div>
+        <div class="qty-wrap">
+          <button class="qty-btn" onclick="changeQty(8,-1)">−</button>
+          <div class="qty-num" id="qty-8">0</div>
+          <button class="qty-btn" onclick="changeQty(8,1)">+</button>
+        </div>
+      </div>
+      <div class="size-opts">
+        <button class="size-btn active" onclick="changeSize(8,'reguler',this)">Reguler</button>
+        <button class="size-btn" onclick="changeSize(8,'big',this)">Big</button>
+      </div>
+    </div>
+
+    <div class="menu-item" id="item-9">
+      <div class="item-row">
+        <div class="item-info">
+          <div class="item-name">Sticky Milk Red Velvet</div>
+          <div class="item-price">Reguler Rp 8.000 &nbsp;·&nbsp; Big Rp 10.000</div>
+        </div>
+        <div class="qty-wrap">
+          <button class="qty-btn" onclick="changeQty(9,-1)">−</button>
+          <div class="qty-num" id="qty-9">0</div>
+          <button class="qty-btn" onclick="changeQty(9,1)">+</button>
+        </div>
+      </div>
+      <div class="size-opts">
+        <button class="size-btn active" onclick="changeSize(9,'reguler',this)">Reguler</button>
+        <button class="size-btn" onclick="changeSize(9,'big',this)">Big</button>
+      </div>
+    </div>
+
+    <div class="menu-item" id="item-10">
+      <div class="item-row">
+        <div class="item-info">
+          <div class="item-name">Sticky Milk Manggo</div>
+          <div class="item-price">Reguler Rp 8.000 &nbsp;·&nbsp; Big Rp 10.000</div>
+        </div>
+        <div class="qty-wrap">
+          <button class="qty-btn" onclick="changeQty(10,-1)">−</button>
+          <div class="qty-num" id="qty-10">0</div>
+          <button class="qty-btn" onclick="changeQty(10,1)">+</button>
+        </div>
+      </div>
+      <div class="size-opts">
+        <button class="size-btn active" onclick="changeSize(10,'reguler',this)">Reguler</button>
+        <button class="size-btn" onclick="changeSize(10,'big',this)">Big</button>
+      </div>
+    </div>
+
+    <div class="menu-item" id="item-11">
+      <div class="item-row">
+        <div class="item-info">
+          <div class="item-name">Sticky Milk Permen Karet</div>
+          <div class="item-price">Reguler Rp 8.000 &nbsp;·&nbsp; Big Rp 10.000</div>
+        </div>
+        <div class="qty-wrap">
+          <button class="qty-btn" onclick="changeQty(11,-1)">−</button>
+          <div class="qty-num" id="qty-11">0</div>
+          <button class="qty-btn" onclick="changeQty(11,1)">+</button>
+        </div>
+      </div>
+      <div class="size-opts">
+        <button class="size-btn active" onclick="changeSize(11,'reguler',this)">Reguler</button>
+        <button class="size-btn" onclick="changeSize(11,'big',this)">Big</button>
+      </div>
+    </div>
+
+    <div class="menu-item" id="item-12">
+      <div class="item-row">
+        <div class="item-info">
+          <div class="item-name">Sticky Milk Strawberry</div>
+          <div class="item-price">Reguler Rp 8.000 &nbsp;·&nbsp; Big Rp 10.000</div>
+        </div>
+        <div class="qty-wrap">
+          <button class="qty-btn" onclick="changeQty(12,-1)">−</button>
+          <div class="qty-num" id="qty-12">0</div>
+          <button class="qty-btn" onclick="changeQty(12,1)">+</button>
+        </div>
+      </div>
+      <div class="size-opts">
+        <button class="size-btn active" onclick="changeSize(12,'reguler',this)">Reguler</button>
+        <button class="size-btn" onclick="changeSize(12,'big',this)">Big</button>
+      </div>
+    </div>
+
+    <div class="menu-item" id="item-13">
+      <div class="item-row">
+        <div class="item-info">
+          <div class="item-name">Es Jeruk Peras</div>
+          <div class="item-price">Rp 5.000</div>
+        </div>
+        <div class="qty-wrap">
+          <button class="qty-btn" onclick="changeQty(13,-1)">−</button>
+          <div class="qty-num" id="qty-13">0</div>
+          <button class="qty-btn" onclick="changeQty(13,1)">+</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TEA -->
+  <div class="category">
+    <div class="category-label">
+      <span class="icon">🍃</span>
+      <h2>Tea</h2>
+      <div class="line"></div>
+    </div>
+    <div class="menu-item" id="item-14">
+      <div class="item-row">
+        <div class="item-info">
+          <div class="item-name">Es Teh Renjana</div>
+          <div class="item-price">Rp 3.000</div>
+        </div>
+        <div class="qty-wrap">
+          <button class="qty-btn" onclick="changeQty(14,-1)">−</button>
+          <div class="qty-num" id="qty-14">0</div>
+          <button class="qty-btn" onclick="changeQty(14,1)">+</button>
+        </div>
+      </div>
+    </div>
+    <div class="menu-item" id="item-15">
+      <div class="item-row">
+        <div class="item-info">
+          <div class="item-name">Es Teh Leci</div>
+          <div class="item-price">Rp 5.000</div>
+        </div>
+        <div class="qty-wrap">
+          <button class="qty-btn" onclick="changeQty(15,-1)">−</button>
+          <div class="qty-num" id="qty-15">0</div>
+          <button class="qty-btn" onclick="changeQty(15,1)">+</button>
+        </div>
+      </div>
+    </div>
+    <div class="menu-item" id="item-16">
+      <div class="item-row">
+        <div class="item-info">
+          <div class="item-name">Es Teh Apel</div>
+          <div class="item-price">Rp 5.000</div>
+        </div>
+        <div class="qty-wrap">
+          <button class="qty-btn" onclick="changeQty(16,-1)">−</button>
+          <div class="qty-num" id="qty-16">0</div>
+          <button class="qty-btn" onclick="changeQty(16,1)">+</button>
+        </div>
+      </div>
+    </div>
+    <div class="menu-item" id="item-17">
+      <div class="item-row">
+        <div class="item-info">
+          <div class="item-name">Thai Tea Renjana</div>
+          <div class="item-price">Rp 8.000</div>
+        </div>
+        <div class="qty-wrap">
+          <button class="qty-btn" onclick="changeQty(17,-1)">−</button>
+          <div class="qty-num" id="qty-17">0</div>
+          <button class="qty-btn" onclick="changeQty(17,1)">+</button>
+        </div>
+      </div>
+    </div>
+    <div class="menu-item" id="item-18">
+      <div class="item-row">
+        <div class="item-info">
+          <div class="item-name">Teh Tarik Renjana</div>
+          <div class="item-price">Rp 8.000</div>
+        </div>
+        <div class="qty-wrap">
+          <button class="qty-btn" onclick="changeQty(18,-1)">−</button>
+          <div class="qty-num" id="qty-18">0</div>
+          <button class="qty-btn" onclick="changeQty(18,1)">+</button>
+        </div>
+      </div>
+    </div>
+    <div class="menu-item" id="item-19">
+      <div class="item-row">
+        <div class="item-info">
+          <div class="item-name">Teh Milk Renjana</div>
+          <div class="item-price">Rp 8.000</div>
+        </div>
+        <div class="qty-wrap">
+          <button class="qty-btn" onclick="changeQty(19,-1)">−</button>
+          <div class="qty-num" id="qty-19">0</div>
+          <button class="qty-btn" onclick="changeQty(19,1)">+</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOD -->
+  <div class="category">
+    <div class="category-label">
+      <span class="icon">🍗</span>
+      <h2>Food</h2>
+      <div class="line"></div>
+    </div>
+    <div class="menu-item" id="item-20">
+      <div class="item-row">
+        <div class="item-info">
+          <div class="item-name">Ayam Saja</div>
+          <div class="item-desc">Dada ayam dan saos sambal</div>
+          <div class="item-price">Rp 5.000</div>
+        </div>
+        <div class="qty-wrap">
+          <button class="qty-btn" onclick="changeQty(20,-1)">−</button>
+          <div class="qty-num" id="qty-20">0</div>
+          <button class="qty-btn" onclick="changeQty(20,1)">+</button>
+        </div>
+      </div>
+    </div>
+    <div class="menu-item" id="item-21">
+      <div class="item-row">
+        <div class="item-info">
+          <div class="item-name">Paket Ayam + Nasi</div>
+          <div class="item-desc">Ayam dada dan tambahan nasi pulen</div>
+          <div class="item-price">Rp 10.000</div>
+        </div>
+        <div class="qty-wrap">
+          <button class="qty-btn" onclick="changeQty(21,-1)">−</button>
+          <div class="qty-num" id="qty-21">0</div>
+          <button class="qty-btn" onclick="changeQty(21,1)">+</button>
+        </div>
+      </div>
+    </div>
+    <div class="menu-item" id="item-22">
+      <div class="item-row">
+        <div class="item-info">
+          <div class="item-name">Paket Ayam + Nasi + Es Teh</div>
+          <div class="item-desc">Ayam dada, nasi pulen, dan es teh</div>
+          <div class="item-price">Rp 12.000</div>
+        </div>
+        <div class="qty-wrap">
+          <button class="qty-btn" onclick="changeQty(22,-1)">−</button>
+          <div class="qty-num" id="qty-22">0</div>
+          <button class="qty-btn" onclick="changeQty(22,1)">+</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SUMMARY BAR -->
+<div class="summary-bar" id="summaryBar">
+  <div class="summary-inner">
+    <div class="summary-info">
+      <div class="summary-count" id="summaryCount">0 item dipilih</div>
+      <div class="summary-total" id="summaryTotal">Rp 0</div>
+    </div>
+    <button class="order-btn" onclick="handleOrder()">Pesan Sekarang →</button>
+  </div>
+</div>
+
+<!-- CONFIRM MODAL -->
+<div class="overlay" id="confirmOverlay">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title">Konfirmasi Pesanan</div>
+    <div class="order-name-label">Atas nama: <strong id="modalName"></strong></div>
+    <div class="order-items" id="modalItems"></div>
+    <div class="order-total-bar">
+      <span class="order-total-label">Total Pembayaran</span>
+      <span class="order-total-val" id="modalTotal">Rp 0</span>
+    </div>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeModal()">Batal</button>
+      <button class="btn-wa" onclick="sendToWhatsApp()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.125.557 4.126 1.526 5.865L0 24l6.335-1.508A11.954 11.954 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.97 0-3.812-.527-5.397-1.443l-.387-.23-4.017.956.987-3.906-.25-.4A9.962 9.962 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
+        Kirim ke WhatsApp
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- POPUP MENU HARI INI -->
+<div class="overlay active" id="menuPopup">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title">Menu Hari Ini</div>
+    <div class="pop-section">
+      <div class="pop-section-title pop-available">✅ Tersedia</div>
+      <div id="availableList"></div>
+    </div>
+    <div class="pop-section">
+      <div class="pop-section-title pop-unavailable">❌ Belum Tersedia</div>
+      <div id="unavailableList"></div>
+    </div>
+    <button class="pop-start-btn" onclick="closePopup()">Mulai Pesan</button>
+  </div>
+</div>
+
+<script>
+var menu = [
+  // COFFEE
+  {n:"Renjana Americano", p:5000, a:1},
+  {n:"Renjana Kopi Hitam", p:5000, a:1},
+  {n:"Renjana Cappuccino", p:8000, a:1},
+  {n:"Renjana Aren Latte", p:8000, a:1},
+  {n:"Good Day (All Varian)", p:5000, a:1},
+  {n:"Coffee Lainnya (All Varian)", p:5000, a:1},
+  // NON-COFFEE
+  {n:"Sticky Milk Matcha", r:8000, b:10000, s:1, a:1},
+  {n:"Sticky Milk Coklat", r:8000, b:10000, s:1, a:1},
+  {n:"Sticky Milk Taro", r:8000, b:10000, s:1, a:1},
+  {n:"Sticky Milk Red Velvet", r:8000, b:10000, s:1, a:1},
+  {n:"Sticky Milk Manggo", r:8000, b:10000, s:1, a:1},
+  {n:"Sticky Milk Permen Karet", r:8000, b:10000, s:1, a:1},
+  {n:"Sticky Milk Strawberry", r:8000, b:10000, s:1, a:1},
+  {n:"Es Jeruk Peras", p:5000, a:1},
+  // TEA
+  {n:"Es Teh Renjana", p:3000, a:1},
+  {n:"Es Teh Leci", p:5000, a:1},
+  {n:"Es Teh Apel", p:5000, a:1},
+  {n:"Thai Tea Renjana", p:8000, a:1},
+  {n:"Teh Tarik Renjana", p:8000, a:1},
+  {n:"Teh Milk Renjana", p:8000, a:1},
+  // FOOD
+  {n:"Ayam Saja", p:5000, a:1},
+  {n:"Paket Ayam + Nasi", p:10000, a:1},
+  {n:"Paket Ayam + Nasi + Es Teh", p:12000, a:1}
+];
+
+var ord = menu.map(function(){ return {q:0, z:'reguler'}; });
+
+window.onload = function(){
+  initAvailability();
+  buildPopup();
+};
+
+function initAvailability(){
+  menu.forEach(function(m, i){
+    if(!m.a){
+      var el = document.getElementById('item-'+i);
+      if(!el) return;
+      el.classList.add('unavailable');
+      el.querySelectorAll('.qty-btn,.size-btn').forEach(function(b){ b.disabled=true; });
+      var tag = document.createElement('div');
+      tag.className = 'unavailable-tag';
+      tag.innerHTML = '⊘ Belum tersedia';
+      el.querySelector('.item-info').appendChild(tag);
+    }
+  });
+}
+
+function buildPopup(){
+  var av='', unav='';
+  menu.forEach(function(m){
+    var sz = m.s ? ' <span style="opacity:0.6;font-size:0.9em">(R/B)</span>' : '';
+    if(m.a) av += '<div class="pop-item">'+m.n+sz+'</div>';
+    else unav += '<div class="pop-item">'+m.n+sz+'</div>';
+  });
+  document.getElementById('availableList').innerHTML = av || '<div class="pop-item" style="opacity:0.5">—</div>';
+  document.getElementById('unavailableList').innerHTML = unav || '<div class="pop-item" style="opacity:0.5">Semua menu tersedia</div>';
+}
+
+function closePopup(){ document.getElementById('menuPopup').classList.remove('active'); }
+
+function changeQty(i, c){
+  if(!menu[i].a) return;
+  var nq = Math.max(0, ord[i].q + c);
+  ord[i].q = nq;
+  document.getElementById('qty-'+i).textContent = nq;
+  var el = document.getElementById('item-'+i);
+  el.classList.toggle('selected', nq > 0);
+  updateSummary();
+}
+
+function changeSize(i, z, btn){
+  if(!menu[i].a) return;
+  ord[i].z = z;
+  btn.closest('.size-opts').querySelectorAll('.size-btn').forEach(function(b){ b.classList.remove('active'); });
+  btn.classList.add('active');
+  updateSummary();
+}
+
+function getPrice(i){
+  var m = menu[i];
+  return m.s ? (ord[i].z === 'reguler' ? m.r : m.b) : m.p;
+}
+
+function updateSummary(){
+  var ti=0, tp=0;
+  ord.forEach(function(o,i){ if(o.q>0){ ti+=o.q; tp+=o.q*getPrice(i); } });
+  var bar = document.getElementById('summaryBar');
+  if(ti > 0){
+    bar.classList.add('show');
+    document.getElementById('summaryCount').textContent = ti + ' item dipilih';
+    document.getElementById('summaryTotal').textContent = 'Rp ' + tp.toLocaleString('id-ID');
+  } else {
+    bar.classList.remove('show');
+  }
+}
+
+function handleOrder(){
+  var nm = document.getElementById('customerName').value.trim();
+  if(!nm){ alert('Masukkan nama pemesan dulu ya!'); document.getElementById('customerName').focus(); return; }
+  var has = ord.some(function(o){ return o.q>0; });
+  if(!has){ alert('Pilih menu dulu ya!'); return; }
+  showConfirm(nm);
+}
+
+function showConfirm(nm){
+  document.getElementById('modalName').textContent = nm;
+  var catatan = document.getElementById('orderNotes').value.trim();
+  var html='', tot=0;
+  ord.forEach(function(o,i){
+    if(o.q>0){
+      var m=menu[i], pr=getPrice(i), st=o.q*pr;
+      tot+=st;
+      var dn=m.s ? m.n+' ('+o.z+')' : m.n;
+      html+='<div class="order-row"><div><div class="order-row-name">'+dn+'</div><div class="order-row-qty">'+o.q+' x Rp '+pr.toLocaleString('id-ID')+'</div></div><div class="order-row-price">Rp '+st.toLocaleString('id-ID')+'</div></div>';
+    }
+  });
+  if(catatan){
+    html+='<div style="margin-top:12px;padding:10px 12px;background:#1a1710;border-radius:8px;border-left:2px solid var(--gold-dim);"><div style="font-size:0.75em;color:var(--muted);margin-bottom:3px;letter-spacing:0.5px;text-transform:uppercase;">Catatan</div><div style="font-size:0.88em;color:var(--text);">'+catatan+'</div></div>';
+  }
+  document.getElementById('modalItems').innerHTML = html;
+  document.getElementById('modalTotal').textContent = 'Rp '+tot.toLocaleString('id-ID');
+  document.getElementById('confirmOverlay').classList.add('active');
+}
+
+function closeModal(){ document.getElementById('confirmOverlay').classList.remove('active'); }
+
+function sendToWhatsApp(){
+  var nm = document.getElementById('customerName').value.trim();
+  var catatan = document.getElementById('orderNotes').value.trim();
+  var sep = '-----------------------------';
+  var msg = '*PESANAN BARU - RENJANA*\n';
+  msg += sep + '\n';
+  msg += 'Nama   : *' + nm + '*\n';
+  if(catatan) {
+    msg += 'Catatan: ' + catatan + '\n';
+  }
+  msg += sep + '\n\n';
+  msg += '*Detail Pesanan:*\n';
+  var tot=0, no=1;
+  ord.forEach(function(o,i){
+    if(o.q>0){
+      var m=menu[i], pr=getPrice(i), st=o.q*pr, dn=m.s?m.n+' ('+o.z+')':m.n;
+      tot+=st;
+      msg += no+'. '+dn+'\n';
+      msg += '   '+o.q+' x Rp '+pr.toLocaleString('id-ID')+' = Rp '+st.toLocaleString('id-ID')+'\n';
+      no++;
+    }
+  });
+  msg += '\n' + sep + '\n';
+  msg += 'TOTAL: *Rp '+tot.toLocaleString('id-ID')+'*\n';
+  msg += sep;
+  window.location.href='https://wa.me/62895352138648?text='+encodeURIComponent(msg);
+}
+</script>
 </body>
 </html>
-
