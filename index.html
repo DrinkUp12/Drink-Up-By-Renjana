@@ -277,6 +277,17 @@
   }
   .time-btn.active { background: var(--primary); border-color: var(--primary); color: #fff; }
   .time-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+  .time-btn-express {
+    background: var(--accent-pale);
+    border-color: var(--accent);
+    color: #b45309;
+    font-weight: 700;
+  }
+  .time-btn-express.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+  }
   .no-slots-msg {
     font-size: 0.82em;
     color: var(--text-muted);
@@ -1022,7 +1033,10 @@
   <div class="section-block">
     <div class="section-label">
       🕐 Waktu Pengambilan
-      <span class="pickup-info-tag">⚡ siap &lt;30 menit</span>
+      <span class="pickup-info-tag">⚡ opsi express &lt;30 mnt</span>
+    </div>
+    <div id="jamBukaInfo" style="font-size:0.82em;font-weight:600;color:#166534;padding:9px 13px;border-radius:10px;border:1.5px solid #27ae60;background:#f0fdf4;margin-bottom:13px;transition:all 0.3s;line-height:1.6;">
+      🟢 Memuat jam buka...
     </div>
     <div class="day-row" id="dayRow"></div>
     <div class="time-slots-label">Pilih Jam</div>
@@ -1669,13 +1683,43 @@ var menu = [
 
 var ord = menu.map(function(){ return {q:0, z:'reguler'}; });
 
-// --- SCHEDULE ---
+// ================================================================
+//  ⚙️  KONFIGURASI JAM BUKA — UBAH DI SINI SESUAI KEBUTUHAN
+// ================================================================
+//
+//  Setiap hari punya 3 pengaturan:
+//    open  → jam BUKA  (angka, format 24 jam. contoh: 10 = jam 10.00)
+//    close → jam TUTUP (angka, format 24 jam. contoh: 18 = jam 18.00)
+//    tutup → true  = LIBUR, tidak terima pesanan hari itu
+//            false = BUKA seperti biasa
+//
+//  ✏️  Cara ubah:
+//    • Ganti jam Senin buka jam 9  → 'Senin': { open: 9, close: 18, tutup: false }
+//    • Buat Minggu libur           → 'Minggu': { open: 10, close: 18, tutup: true  }
+//    • Jumat buka mulai jam 13     → 'Jumat':  { open: 13, close: 18, tutup: false }
+//
+var JAM_BUKA = {
+  //   Hari         Buka   Tutup   Libur?
+  'Minggu'  : { open: 10, close: 18, tutup: false },
+  'Senin'   : { open: 10, close: 18, tutup: false },
+  'Selasa'  : { open: 10, close: 18, tutup: false },
+  'Rabu'    : { open: 10, close: 18, tutup: false },
+  'Kamis'   : { open: 10, close: 18, tutup: false },
+  'Jumat'   : { open: 13, close: 18, tutup: false },  // ← buka siang setelah Jumatan
+  'Sabtu'   : { open: 10, close: 18, tutup: false }
+};
+// ================================================================
+
 var DAYS_ID   = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
 var MONTHS_ID = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
-var OPEN_HOUR  = 10;
-var CLOSE_HOUR = 18;
 var selectedDay  = 0;
 var selectedSlot = null;
+
+// Ambil config jam untuk tanggal tertentu
+function getJadwal(dayDate){
+  var namaHari = DAYS_ID[dayDate.getDay()];
+  return JAM_BUKA[namaHari] || { open: 10, close: 18, tutup: false };
+}
 
 function pad(n){ return n < 10 ? '0'+n : ''+n; }
 
@@ -1689,47 +1733,138 @@ function getDays(){
   return days;
 }
 
+// ================================================================
+//  LOGIKA SLOT WAKTU PENGAMBILAN
+//
+//  Aturan:
+//  1. Slot pertama adalah "< 30 menit" (express).
+//     - Aktif hanya jika jam sekarang >= (OPEN_HOUR:00 - 20 menit),
+//       karena minimum pickup adalah OPEN_HOUR:10.
+//       Contoh: buka jam 10, slot ini muncul mulai jam 09:40.
+//     - Jika jam sekarang >= 30 menit sebelum slot reguler berikutnya,
+//       slot express dianggap sudah tutup.
+//       Contoh: slot reguler berikutnya jam 10:30 → express tutup jam 10:00.
+//     - Khusus sore: max order online jam 17:30. Jika jam 17:30–17:59,
+//       slot express masih bisa dipilih untuk pickup sebelum tutup jam 18:00.
+//  2. Slot reguler: setiap 30 menit mulai OPEN_HOUR:30, OPEN_HOUR+1:00, dst.
+//     - Slot dinonaktifkan jika waktu mulai slot < (now + 30 menit).
+//     - Tidak ada slot reguler setelah jam CLOSE_HOUR.
+//  3. Untuk hari besok semua slot tersedia (tidak ada filter waktu).
+// ================================================================
 function getSlots(dayDate){
-  var now = new Date();
-  var isToday = (dayDate.toDateString() === now.toDateString());
-  var slots = [];
-  for(var h = OPEN_HOUR; h <= CLOSE_HOUR; h++){
-    for(var m = 0; m < 60; m += 30){
-      if(h === CLOSE_HOUR && m > 0) break;
-      var endH = h + (m + 30 >= 60 ? 1 : 0);
-      var endM = (m + 30) % 60;
-      if(endH > CLOSE_HOUR || (endH === CLOSE_HOUR && endM > 0)) break;
-      var label = pad(h)+'.'+pad(m)+' - '+pad(endH)+'.'+pad(endM);
-      var disabled = false;
-      if(isToday){
-        var slotStart = new Date(now);
-        slotStart.setHours(h, m, 0, 0);
-        var minPickup = new Date(now.getTime() + 30 * 60 * 1000);
-        if(slotStart < minPickup) disabled = true;
-      }
-      slots.push({label:label, disabled:disabled});
-    }
+  var jadwal = getJadwal(dayDate);
+  if(jadwal.tutup) return [];
+
+  var now      = new Date();
+  var isToday  = (dayDate.toDateString() === now.toDateString());
+  var slots    = [];
+  var OPEN_H   = jadwal.open;   // jam buka, misal 10
+  var CLOSE_H  = jadwal.close;  // jam tutup, misal 18
+
+  // --- nowMins: menit sejak tengah malam untuk "sekarang" ---
+  var nowMins  = isToday ? (now.getHours() * 60 + now.getMinutes()) : -1;
+
+  // ---- SLOT 1: Express "< 30 menit" ----
+  // Muncul mulai 1 menit sebelum jam buka (OPEN_H:00 - 1 menit)
+  var expressOpenMins  = OPEN_H * 60 - 1;  // misal 10*60-1 = 599 = 09:59
+  // Express tutup saat nowMins >= slot reguler pertama - 30 menit
+  // Slot reguler pertama = OPEN_H:30 = OPEN_H*60 + 30
+  // Jadi express tutup di nowMins >= OPEN_H*60  (30 menit sebelum OPEN_H:30)
+  var expressCloseMins = OPEN_H * 60;       // misal 10*60 = 600 = 10:00
+
+  // Khusus: blok express sore (max order 17:30, pickup sebelum 18:00)
+  // Jika nowMins antara 17:30 (1050) dan 18:00 (1080) dan tutup jam 18
+  var isLastCallExpress = isToday && (CLOSE_H === 18)
+                          && (nowMins >= 1050) && (nowMins < 1080);
+
+  var expressDisabled = false;
+  if(!isToday){
+    expressDisabled = true;  // express tidak berlaku untuk hari besok
+  } else if(isLastCallExpress){
+    expressDisabled = false; // tetap bisa, ini slot last call
+  } else if(nowMins < expressOpenMins){
+    expressDisabled = true;  // terlalu pagi, toko belum mau buka
+  } else if(nowMins >= expressCloseMins){
+    expressDisabled = true;  // sudah terlalu siang, lewat window express
   }
+  slots.push({ label: '⚡ < 30 menit', express: true, disabled: expressDisabled });
+
+  // ---- SLOT REGULER: mulai OPEN_H:30, setiap 30 menit ----
+  // Batas akhir: CLOSE_H:00 (slot terakhir = CLOSE_H-1:30 - CLOSE_H:00)
+  var startMins = OPEN_H * 60 + 30; // 10:30 = 630
+  var endMins   = CLOSE_H * 60;     // 18:00 = 1080
+
+  for(var sm = startMins; sm < endMins; sm += 30){
+    var sH = Math.floor(sm / 60);
+    var sM = sm % 60;
+    var em = sm + 30;
+    var eH = Math.floor(em / 60);
+    var eM = em % 60;
+    var label = pad(sH)+'.'+pad(sM)+' - '+pad(eH)+'.'+pad(eM);
+    var disabled = false;
+    if(isToday){
+      // Nonaktif jika waktu mulai slot < (sekarang + 30 menit)
+      var minAllowedStart = nowMins + 30;
+      if(sm < minAllowedStart) disabled = true;
+      // Tidak boleh pilih slot reguler jika nowMins sudah >= 17:30
+      // (hanya express yang masih boleh di last call)
+      if(nowMins >= 1050) disabled = true;
+    }
+    slots.push({ label: label, express: false, disabled: disabled });
+  }
+
   return slots;
+}
+
+// Render label jam buka di section pickup
+function renderJamBukaInfo(dayDate){
+  var jadwal   = getJadwal(dayDate);
+  var namaHari = DAYS_ID[dayDate.getDay()];
+  var el = document.getElementById('jamBukaInfo');
+  if(!el) return;
+
+  if(jadwal.tutup){
+    el.innerHTML = '🔴 <strong>Tutup</strong> — Kami libur hari ' + namaHari + '. Silakan pilih hari lain ya!';
+    el.style.background    = '#fff5f5';
+    el.style.borderColor   = '#e74c3c';
+    el.style.color         = '#b91c1c';
+  } else {
+    var catatan = '';
+    if(namaHari === 'Jumat') catatan = ' &nbsp;·&nbsp; <span style="font-weight:500;opacity:0.85">buka setelah Jumatan</span>';
+    el.innerHTML = '🟢 <strong>Buka hari ' + namaHari + '</strong>'
+                 + ' &nbsp;·&nbsp; <span style="color:#166534;">Jam ' + pad(jadwal.open) + '.00 – ' + pad(jadwal.close) + '.00</span>'
+                 + catatan
+                 + ' &nbsp;·&nbsp; <span style="color:#92400e;font-size:0.9em;">⏰ max order online 17.30</span>';
+    el.style.background    = '#f0fdf4';
+    el.style.borderColor   = '#27ae60';
+    el.style.color         = '#14532d';
+  }
 }
 
 function buildDayRow(){
   var days = getDays();
   var now  = new Date();
-  var todayHasSlots = now.getHours() < CLOSE_HOUR ||
-                      (now.getHours() === CLOSE_HOUR && now.getMinutes() === 0);
-  var defaultDay = todayHasSlots ? 0 : 1;
+  // Pilih default ke hari yang masih punya slot
+  var defaultDay = 0;
+  var todayJadwal = getJadwal(days[0]);
+  var todayClose  = todayJadwal.close || 18;
+  if(todayJadwal.tutup || now.getHours() >= todayClose){
+    defaultDay = 1;
+  }
   var html = '';
   days.forEach(function(d, i){
+    var jadwal   = getJadwal(d);
     var dayLabel = i===0 ? 'Hari Ini' : 'Besok';
     var dateStr  = d.getDate()+' '+MONTHS_ID[d.getMonth()];
+    var tutupTag = jadwal.tutup ? ' <span style="font-size:0.75em;color:#e74c3c;">Tutup</span>' : '';
     html += '<button class="day-btn'+(i===defaultDay?' active':'')+'" onclick="selectDay('+i+',this)">'
-          + '<span class="day-name">'+dayLabel+'</span>'
+          + '<span class="day-name">'+dayLabel+tutupTag+'</span>'
           + '<span class="day-date">'+DAYS_ID[d.getDay()]+', '+dateStr+'</span>'
           + '</button>';
   });
   document.getElementById('dayRow').innerHTML = html;
   selectedDay = defaultDay;
+  renderJamBukaInfo(days[defaultDay]);
   buildTimeSlots(defaultDay);
 }
 
@@ -1738,20 +1873,26 @@ function selectDay(idx, btn){
   btn.classList.add('active');
   selectedDay  = idx;
   selectedSlot = null;
+  var days = getDays();
+  renderJamBukaInfo(days[idx]);
   buildTimeSlots(idx);
 }
 
 function buildTimeSlots(idx){
-  var days  = getDays();
-  var slots = getSlots(days[idx]);
+  var days   = getDays();
+  var jadwal = getJadwal(days[idx]);
+  var slots  = getSlots(days[idx]);
   var hasAvail = slots.some(function(s){ return !s.disabled; });
   var html = '';
-  if(!hasAvail){
-    html = '<div class="no-slots-msg">Tidak ada slot tersedia untuk hari ini. Pilih besok ya!</div>';
+  if(jadwal.tutup){
+    html = '<div class="no-slots-msg">🔴 Kami tutup hari ini. Silakan pilih hari lain ya!</div>';
+  } else if(!hasAvail){
+    html = '<div class="no-slots-msg">Tidak ada slot tersedia. Pilih besok ya!</div>';
   } else {
     slots.forEach(function(s){
       if(s.disabled) return;
-      html += '<button class="time-btn" onclick="selectSlot(\''+s.label+'\',this)">'+s.label+'</button>';
+      var extraClass = s.express ? ' time-btn-express' : '';
+      html += '<button class="time-btn'+extraClass+'" onclick="selectSlot(\''+s.label+'\',this)">'+s.label+'</button>';
     });
   }
   document.getElementById('timeSlots').innerHTML = html;
