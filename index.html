@@ -719,19 +719,211 @@
   }
   .btn-wa:hover { background: #20bc5a; }
 
-  /* PAYMENT OVERLAY */
+  /* QR PAYMENT OVERLAY */
   .pay-overlay {
     display: none;
     position: fixed; inset: 0;
-    background: rgba(0,0,0,0.6);
+    background: rgba(0,0,0,0.65);
     backdrop-filter: blur(6px);
     z-index: 300;
     align-items: center;
     justify-content: center;
-    padding: 20px;
+    padding: 16px;
+    overflow-y: auto;
   }
   .pay-overlay.active { display: flex; }
+  @keyframes popIn { from { transform: scale(0.9); opacity:0; } to { transform: scale(1); opacity:1; } }
+
   .pay-card {
+    background: var(--surface);
+    border-radius: 24px;
+    padding: 28px 22px 24px;
+    max-width: 360px;
+    width: 100%;
+    text-align: center;
+    animation: popIn 0.35s cubic-bezier(.22,1,.36,1);
+    box-shadow: var(--shadow-lg);
+    position: relative;
+  }
+  .pay-step-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--primary-pale);
+    color: var(--primary);
+    font-size: 0.72em;
+    font-weight: 700;
+    padding: 5px 12px;
+    border-radius: 20px;
+    margin-bottom: 14px;
+    letter-spacing: 0.3px;
+  }
+  .pay-title {
+    font-family: 'Nunito', sans-serif;
+    font-size: 1.25em;
+    font-weight: 900;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+  .pay-subtitle {
+    font-size: 0.8em;
+    color: var(--text-muted);
+    margin-bottom: 16px;
+    line-height: 1.5;
+  }
+  .qr-wrap {
+    background: #fff;
+    border: 2px solid var(--border);
+    border-radius: 16px;
+    padding: 12px;
+    margin: 0 auto 16px;
+    display: inline-block;
+    width: 100%;
+  }
+  .qr-wrap img {
+    width: 100%;
+    max-width: 240px;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+    border-radius: 8px;
+  }
+  .qr-merchant {
+    margin-top: 10px;
+    font-size: 0.78em;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: 0.3px;
+  }
+  .qr-nmid {
+    font-size: 0.7em;
+    color: var(--text-muted);
+    margin-top: 2px;
+  }
+  .pay-amount-box {
+    background: var(--primary-pale);
+    border-radius: 12px;
+    padding: 12px 16px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .pay-amount-label {
+    font-size: 0.78em;
+    color: var(--text-secondary);
+    font-weight: 600;
+  }
+  .pay-amount-val {
+    font-family: 'Nunito', sans-serif;
+    font-size: 1.2em;
+    font-weight: 900;
+    color: var(--primary);
+  }
+  .pay-steps {
+    background: var(--bg);
+    border-radius: 12px;
+    padding: 12px 14px;
+    margin-bottom: 18px;
+    text-align: left;
+  }
+  .pay-steps-title {
+    font-size: 0.72em;
+    font-weight: 800;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 8px;
+  }
+  .pay-step-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    font-size: 0.78em;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    margin-bottom: 5px;
+  }
+  .pay-step-item:last-child { margin-bottom: 0; }
+  .pay-step-num {
+    width: 18px; height: 18px;
+    background: var(--primary);
+    color: #fff;
+    border-radius: 50%;
+    font-size: 0.75em;
+    font-weight: 800;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .btn-paid {
+    width: 100%;
+    padding: 15px;
+    background: var(--green);
+    color: #fff;
+    border: none;
+    border-radius: 14px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.92em;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 4px 14px rgba(39,174,96,0.35);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 10px;
+    margin-bottom: 10px;
+  }
+  .btn-paid:hover { background: #219a52; transform: translateY(-1px); }
+  .btn-resend {
+    width: 100%;
+    padding: 13px;
+    background: transparent;
+    border: 1.5px solid var(--primary);
+    color: var(--primary);
+    border-radius: 14px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.85em;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+  .btn-resend:hover { background: var(--primary-pale); }
+  .btn-pay-cancel {
+    width: 100%;
+    padding: 11px;
+    background: transparent;
+    border: 1.5px solid var(--border);
+    color: var(--text-muted);
+    border-radius: 12px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.82em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-pay-cancel:hover { border-color: var(--text-muted); color: var(--text); }
+
+  /* SUCCESS OVERLAY */
+  .success-overlay {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.65);
+    backdrop-filter: blur(6px);
+    z-index: 400;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .success-overlay.active { display: flex; }
+  .success-card {
     background: var(--surface);
     border-radius: 24px;
     padding: 36px 28px;
@@ -741,23 +933,22 @@
     animation: popIn 0.35s cubic-bezier(.22,1,.36,1);
     box-shadow: var(--shadow-lg);
   }
-  @keyframes popIn { from { transform: scale(0.9); opacity:0; } to { transform: scale(1); opacity:1; } }
-  .pay-icon { font-size: 3.5em; margin-bottom: 16px; }
-  .pay-title {
+  .success-icon { font-size: 3.5em; margin-bottom: 16px; }
+  .success-title {
     font-family: 'Nunito', sans-serif;
-    font-size: 1.3em;
+    font-size: 1.35em;
     font-weight: 900;
     color: var(--text);
     margin-bottom: 10px;
   }
-  .pay-body {
+  .success-body {
     font-size: 0.85em;
     color: var(--text-secondary);
-    line-height: 1.7;
-    margin-bottom: 22px;
+    line-height: 1.8;
+    margin-bottom: 24px;
   }
-  .pay-body strong { color: var(--primary); font-weight: 700; }
-  .pay-close-btn {
+  .success-body strong { color: var(--primary); font-weight: 700; }
+  .success-close-btn {
     width: 100%;
     padding: 14px;
     background: var(--primary);
@@ -771,7 +962,7 @@
     transition: background 0.2s;
     box-shadow: 0 4px 14px rgba(232,71,42,0.3);
   }
-  .pay-close-btn:hover { background: var(--primary-light); }
+  .success-close-btn:hover { background: var(--primary-light); }
 
   /* SCROLLBAR */
   ::-webkit-scrollbar { width: 4px; }
@@ -836,6 +1027,17 @@
     <div class="day-row" id="dayRow"></div>
     <div class="time-slots-label">Pilih Jam</div>
     <div class="time-slots" id="timeSlots"></div>
+    <div style="margin-top:14px;padding:11px 13px;background:#f0f9ff;border-radius:10px;border-left:3px solid #3b82f6;display:flex;align-items:flex-start;gap:9px;">
+      <span style="font-size:1.1em;flex-shrink:0;">📍</span>
+      <div>
+        <div style="font-size:0.72em;font-weight:800;color:#1d4ed8;text-transform:uppercase;letter-spacing:0.7px;margin-bottom:3px;">Lokasi Pengambilan</div>
+        <div style="font-size:0.82em;color:#1e3a5f;line-height:1.6;font-weight:500;">
+          <strong>Renjana with Drink Up</strong><br>
+          Depan Festival Sepatu, Sendal dan Tas<br>
+          Jl. Raya Slogohimo–Purwantoro
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- COFFEE -->
@@ -1354,17 +1556,66 @@
   </div>
 </div>
 
-<!-- PAYMENT NOTICE -->
+<!-- QR PAYMENT MODAL -->
 <div class="pay-overlay" id="payOverlay">
   <div class="pay-card">
-    <div class="pay-icon">🚀</div>
-    <div class="pay-title">Pesanan Terkirim!</div>
-    <div class="pay-body">
-      Pesananmu sudah dikirim ke WhatsApp kami.<br><br>
-      Mohon segera lakukan <strong>pembayaran</strong> agar pesanan langsung diproses dan siap tepat waktu.<br><br>
+    <div class="pay-step-badge">💳 Langkah Terakhir — Bayar Sekarang</div>
+    <div class="pay-title">Scan & Bayar via QRIS</div>
+    <div class="pay-subtitle">Scan QR di bawah pakai aplikasi bank atau e-wallet favoritmu</div>
+
+    <div class="qr-wrap">
+      <img src="img/qr.jpeg" alt="QRIS Renjana">
+      <div class="qr-merchant">DRINK UP · Renjana</div>
+      <div class="qr-nmid">NMID: ID1024327397633</div>
+    </div>
+
+    <div class="pay-amount-box">
+      <span class="pay-amount-label">Total yang harus dibayar</span>
+      <span class="pay-amount-val" id="payTotal">Rp 0</span>
+    </div>
+
+    <div class="pay-steps">
+      <div class="pay-steps-title">📋 Cara Bayar</div>
+      <div class="pay-step-item">
+        <div class="pay-step-num">1</div>
+        <span>Buka aplikasi bank / GoPay / OVO / Dana / ShopeePay</span>
+      </div>
+      <div class="pay-step-item">
+        <div class="pay-step-num">2</div>
+        <span>Pilih fitur <strong>Scan QR</strong> lalu scan kode di atas</span>
+      </div>
+      <div class="pay-step-item">
+        <div class="pay-step-num">3</div>
+        <span>Masukkan nominal sesuai total pesanan, lalu bayar</span>
+      </div>
+      <div class="pay-step-item">
+        <div class="pay-step-num">4</div>
+        <span>Klik tombol <strong>"Sudah Bayar"</strong> dan kirim bukti pembayaran</span>
+      </div>
+    </div>
+
+    <button class="btn-paid" onclick="confirmPayment()">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+      Sudah Bayar — Kirim Bukti Sekarang
+    </button>
+    <button class="btn-resend" onclick="resendOrder()">
+      🔄 Kirim Ulang Pesanan ke WhatsApp
+    </button>
+    <button class="btn-pay-cancel" onclick="closePay()">Belum, Nanti Saja</button>
+  </div>
+</div>
+
+<!-- SUCCESS OVERLAY -->
+<div class="success-overlay" id="successOverlay">
+  <div class="success-card">
+    <div class="success-icon">🚀</div>
+    <div class="success-title">Pesanan Terkirim!</div>
+    <div class="success-body">
+      Pesananmu sudah kami terima lewat WhatsApp.<br><br>
+      Jangan lupa <strong>kirimkan bukti pembayaran</strong> ke WhatsApp kami agar pesanan langsung diproses dan siap tepat waktu.<br><br>
       Terima kasih sudah memesan di <strong>Renjana</strong> ☕
     </div>
-    <button class="pay-close-btn" onclick="closePay()">Oke, Siap! 👍</button>
+    <button class="success-close-btn" onclick="closeSuccess()">Oke, Siap! 👍</button>
   </div>
 </div>
 
@@ -1521,11 +1772,12 @@ function getPickupLabel(){
 }
 
 // --- INIT ---
-window.onload = function(){
+// DOMContentLoaded agar jam pengambilan muncul langsung
+// tanpa menunggu semua gambar selesai terunduh
+document.addEventListener('DOMContentLoaded', function(){
   initAvailability();
   buildPopup();
   buildDayRow();
-  // Category pill highlight on scroll
   var pillLinks = document.querySelectorAll('.cat-pill');
   window.addEventListener('scroll', function(){
     var cats = ['cat-coffee','cat-noncoffee','cat-tea','cat-food'];
@@ -1538,7 +1790,7 @@ window.onload = function(){
       p.classList.toggle('active', p.getAttribute('href') === '#'+active);
     });
   });
-};
+});
 
 function initAvailability(){
   menu.forEach(function(m, i){
@@ -1669,15 +1921,57 @@ function sendToWhatsApp(){
     }
   });
   msg += '\n'+sep+'\nTOTAL : *Rp '+tot.toLocaleString('id-ID')+'*\n'+sep;
+
+  // Store message and total for later use
+  window._waMsg  = msg;
+  window._waTotal = tot;
+
+  // Close confirm modal and show QR payment
   closeModal();
+  document.getElementById('payTotal').textContent = 'Rp ' + tot.toLocaleString('id-ID');
   document.getElementById('payOverlay').classList.add('active');
+
+  // Send WA order message in background
   setTimeout(function(){
     window.open('https://wa.me/6281226931785?text='+encodeURIComponent(msg), '_blank');
-  }, 500);
+  }, 400);
+}
+
+function confirmPayment(){
+  // Close QR modal
+  document.getElementById('payOverlay').classList.remove('active');
+
+  // Build WA message asking to send bukti
+  var buktiMsg = '💳 *BUKTI PEMBAYARAN*\n'
+               + '-----------------------------\n'
+               + 'Halo Renjana! Saya sudah melakukan pembayaran untuk pesanan saya.\n\n'
+               + 'Berikut saya lampirkan bukti transfernya ya 🙏\n'
+               + '-----------------------------\n'
+               + '_(Mohon segera diproses, terima kasih!)_';
+
+  // Open WA with bukti message
+  window.open('https://wa.me/6281226931785?text='+encodeURIComponent(buktiMsg), '_blank');
+
+  // Show success popup
+  setTimeout(function(){
+    document.getElementById('successOverlay').classList.add('active');
+  }, 300);
+}
+
+function resendOrder(){
+  if(window._waMsg){
+    window.open('https://wa.me/6281226931785?text='+encodeURIComponent(window._waMsg), '_blank');
+  } else {
+    alert('Tidak ada pesanan yang tersimpan. Silakan ulangi dari awal.');
+  }
 }
 
 function closePay(){
   document.getElementById('payOverlay').classList.remove('active');
+}
+
+function closeSuccess(){
+  document.getElementById('successOverlay').classList.remove('active');
 }
 </script>
 </body>
