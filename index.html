@@ -233,10 +233,19 @@
     display: flex;
     gap: 8px;
     margin-bottom: 14px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 4px;
+    /* snap scroll agar tombol tidak setengah tampil */
+    scroll-snap-type: x mandatory;
   }
+  .day-row::-webkit-scrollbar { display: none; }
   .day-btn {
-    flex: 1;
-    padding: 9px 4px;
+    /* Tepat 2 tombol tampil: (100% - 1 gap) / 2 */
+    flex: 0 0 calc(50% - 4px);
+    scroll-snap-align: start;
+    padding: 9px 10px;
     background: var(--bg);
     border: 1.5px solid var(--border);
     border-radius: var(--radius-sm);
@@ -253,6 +262,88 @@
   .day-btn .day-date { display: block; font-size: 0.85em; font-weight: 400; color: var(--text-muted); }
   .day-btn.active { background: var(--primary); border-color: var(--primary); color: #fff; }
   .day-btn.active .day-date { color: rgba(255,255,255,0.8); }
+  .day-btn.day-unconfirmed {
+    background: #f3f4f6;
+    border-color: #d1d5db;
+    color: #9ca3af;
+    cursor: pointer;
+    opacity: 0.85;
+  }
+  .day-btn.day-unconfirmed .day-date { color: #c0c4cc; }
+  /* SOSMED BAR */
+  .sosmed-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 14px 16px;
+    margin: 10px 12px;
+    background: var(--surface);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+  }
+  .sosmed-label {
+    font-size: 0.72em;
+    color: var(--text-muted);
+    font-weight: 600;
+    flex-shrink: 0;
+  }
+  .sosmed-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 14px;
+    border-radius: 20px;
+    border: 1.5px solid var(--border);
+    background: var(--bg);
+    color: var(--text-secondary);
+    font-size: 0.78em;
+    font-weight: 700;
+    text-decoration: none;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .sosmed-btn:hover { transform: translateY(-1px); box-shadow: var(--shadow); }
+  .sosmed-btn.ig { border-color: #e1306c; color: #e1306c; background: #fff0f5; }
+  .sosmed-btn.ig:hover { background: #e1306c; color: #fff; }
+  .sosmed-btn.tiktok { border-color: #010101; color: #010101; background: #f7f7f7; }
+  .sosmed-btn.tiktok:hover { background: #010101; color: #fff; }
+  /* UNCONFIRMED NOTICE */
+  .unconfirmed-notice {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 14px;
+    background: #fffbeb;
+    border-radius: 12px;
+    border: 1.5px solid #fbbf24;
+    margin-top: 4px;
+  }
+  .unconfirmed-notice-text {
+    font-size: 0.82em;
+    color: #92400e;
+    font-weight: 500;
+    line-height: 1.5;
+  }
+  .btn-tanya-admin {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 9px 16px;
+    background: #25d366;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.82em;
+    font-weight: 700;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.2s;
+    box-shadow: 0 3px 10px rgba(37,211,102,0.35);
+  }
+  .btn-tanya-admin:hover { background: #1da851; transform: translateY(-1px); }
   .time-slots-label {
     font-size: 0.75em;
     font-weight: 700;
@@ -983,6 +1074,84 @@
   /* UTILITY */
   .mb-0 { margin-bottom: 0; }
   .mt-8 { margin-top: 8px; }
+
+  /* POPUP LIBUR / UNCONFIRMED */
+  .alert-overlay {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.45);
+    backdrop-filter: blur(3px);
+    z-index: 500;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .alert-overlay.active { display: flex; }
+  .alert-card {
+    background: var(--surface);
+    border-radius: 20px;
+    padding: 28px 22px 22px;
+    max-width: 320px;
+    width: 100%;
+    text-align: center;
+    box-shadow: var(--shadow-lg);
+    animation: popIn 0.3s cubic-bezier(.22,1,.36,1);
+  }
+  .alert-icon { font-size: 2.6em; margin-bottom: 12px; }
+  .alert-title {
+    font-family: 'Nunito', sans-serif;
+    font-size: 1.1em;
+    font-weight: 900;
+    color: var(--text);
+    margin-bottom: 8px;
+  }
+  .alert-body {
+    font-size: 0.82em;
+    color: var(--text-secondary);
+    line-height: 1.7;
+    margin-bottom: 18px;
+  }
+  .alert-body strong { color: var(--primary); }
+  .alert-wa-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 10px 18px;
+    background: #25d366;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.82em;
+    font-weight: 700;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.2s;
+    box-shadow: 0 3px 10px rgba(37,211,102,0.35);
+    margin-bottom: 10px;
+    width: 100%;
+    justify-content: center;
+  }
+  .alert-wa-btn:hover { background: #1da851; }
+  .alert-close-btn {
+    width: 100%;
+    padding: 10px;
+    background: transparent;
+    border: 1.5px solid var(--border);
+    color: var(--text-muted);
+    border-radius: 10px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.82em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .alert-close-btn:hover { border-color: var(--text-muted); color: var(--text); }
+  /* Menu terkunci saat tutup/unconfirmed */
+  .menu-locked .qty-btn,
+  .menu-locked .size-btn { pointer-events: none; opacity: 0.3; }
+  .menu-locked .menu-item { cursor: pointer; }
+  .menu-locked .menu-item:hover { background: #fafafa; }
 </style>
 </head>
 <body>
@@ -1004,6 +1173,19 @@
       </button>
     </div>
     <div class="hero-tagline">Pilih favoritmu & pesan langsung via WhatsApp 🚀</div>
+  </div>
+
+  <!-- SOSMED BAR -->
+  <div class="sosmed-bar">
+    <span class="sosmed-label">Ikuti kami:</span>
+    <a href="https://www.instagram.com/renjana_coffee25?igsh=OXg3OWh2ZWF4YXAx" target="_blank" class="sosmed-btn ig">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+      Instagram
+    </a>
+    <a href="https://www.tiktok.com/@renjana_coffee25?_r=1&_t=ZS-9522bNXteqN" target="_blank" class="sosmed-btn tiktok">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.18 8.18 0 004.79 1.54V6.78a4.85 4.85 0 01-1.02-.09z"/></svg>
+      TikTok
+    </a>
   </div>
 
   <!-- CATEGORY PILLS -->
@@ -1043,13 +1225,16 @@
     <div class="time-slots" id="timeSlots"></div>
     <div style="margin-top:14px;padding:11px 13px;background:#f0f9ff;border-radius:10px;border-left:3px solid #3b82f6;display:flex;align-items:flex-start;gap:9px;">
       <span style="font-size:1.1em;flex-shrink:0;">📍</span>
-      <div>
+      <div style="flex:1;">
         <div style="font-size:0.72em;font-weight:800;color:#1d4ed8;text-transform:uppercase;letter-spacing:0.7px;margin-bottom:3px;">Lokasi Pengambilan</div>
         <div style="font-size:0.82em;color:#1e3a5f;line-height:1.6;font-weight:500;">
           <strong>Renjana with Drink Up</strong><br>
           Depan Festival Sepatu, Sendal dan Tas<br>
           Jl. Raya Slogohimo–Purwantoro
         </div>
+        <a href="https://maps.app.goo.gl/Fm1VdXWj9MTMgHiz7" target="_blank" style="display:inline-flex;align-items:center;gap:5px;margin-top:8px;padding:6px 12px;background:#1d4ed8;color:#fff;border-radius:8px;font-size:0.75em;font-weight:700;text-decoration:none;transition:all 0.2s;">
+          🗺️ Buka di Google Maps
+        </a>
       </div>
     </div>
   </div>
@@ -1650,6 +1835,20 @@
   </div>
 </div>
 
+<!-- ALERT POPUP (libur / unconfirmed) -->
+<div class="alert-overlay" id="alertOverlay" onclick="closeAlert(event)">
+  <div class="alert-card" onclick="event.stopPropagation()">
+    <div class="alert-icon" id="alertIcon">🔴</div>
+    <div class="alert-title" id="alertTitle">Kami Tutup</div>
+    <div class="alert-body" id="alertBody"></div>
+    <a href="#" id="alertWaBtn" target="_blank" class="alert-wa-btn">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+      Hubungi Admin via WhatsApp
+    </a>
+    <button class="alert-close-btn" onclick="closeAlert()">Tutup</button>
+  </div>
+</div>
+
 <script>
 var menu = [
   // Coffee
@@ -1706,7 +1905,7 @@ var JAM_BUKA = {
   'Rabu'    : { open: 10, close: 18, tutup: false },
   'Kamis'   : { open: 10, close: 18, tutup: false },
   'Jumat'   : { open: 13, close: 18, tutup: false },  // ← buka siang setelah Jumatan
-  'Sabtu'   : { open: 10, close: 18, tutup: false }
+  'Sabtu'   : { open: 10, close: 18, tutup: true }
 };
 // ================================================================
 
@@ -1725,9 +1924,10 @@ function pad(n){ return n < 10 ? '0'+n : ''+n; }
 
 function getDays(){
   var now = new Date(), days = [];
-  for(var i=0;i<2;i++){
+  for(var i=0;i<7;i++){
     var d = new Date(now);
     d.setDate(now.getDate()+i);
+    d._unconfirmed = (i >= 2); // hari ke-3 dst belum pasti buka
     days.push(d);
   }
   return days;
@@ -1736,20 +1936,21 @@ function getDays(){
 // ================================================================
 //  LOGIKA SLOT WAKTU PENGAMBILAN
 //
-//  Aturan:
-//  1. Slot pertama adalah "< 30 menit" (express).
-//     - Aktif hanya jika jam sekarang >= (OPEN_HOUR:00 - 20 menit),
-//       karena minimum pickup adalah OPEN_HOUR:10.
-//       Contoh: buka jam 10, slot ini muncul mulai jam 09:40.
-//     - Jika jam sekarang >= 30 menit sebelum slot reguler berikutnya,
-//       slot express dianggap sudah tutup.
-//       Contoh: slot reguler berikutnya jam 10:30 → express tutup jam 10:00.
-//     - Khusus sore: max order online jam 17:30. Jika jam 17:30–17:59,
-//       slot express masih bisa dipilih untuk pickup sebelum tutup jam 18:00.
-//  2. Slot reguler: setiap 30 menit mulai OPEN_HOUR:30, OPEN_HOUR+1:00, dst.
-//     - Slot dinonaktifkan jika waktu mulai slot < (now + 30 menit).
-//     - Tidak ada slot reguler setelah jam CLOSE_HOUR.
-//  3. Untuk hari besok semua slot tersedia (tidak ada filter waktu).
+//  Express "⚡ < 30 menit" tampil SEKALI per periode, aktif dalam window:
+//    - Periode awal  : [OPEN_H:00 - 1 menit]  s/d  [OPEN_H:00 + 20 menit]
+//                      contoh buka 10: aktif jam 09:59 – 10:20
+//    - Periode N     : [slotN - 1 menit]       s/d  [slotN + 20 menit]
+//                      contoh slot 10:30: aktif jam 10:29 – 10:50
+//                      contoh slot 11:00: aktif jam 10:59 – 11:20  dst.
+//
+//  Satu express tampil untuk satu periode — jika sudah lewat 10:20,
+//  express hilang, baru muncul lagi di 10:29.
+//
+//  Slot reguler: OPEN_H:30, OPEN_H+1:00, ... s/d CLOSE_H:00
+//    - Non-aktif jika nowMins >= startSlot (sudah lewat).
+//
+//  Hari besok  : express tidak ditampilkan, slot reguler semua aktif.
+//  Hari ke-3+  : semua disabled → tampil notif konfirmasi WA.
 // ================================================================
 function getSlots(dayDate){
   var jadwal = getJadwal(dayDate);
@@ -1757,60 +1958,50 @@ function getSlots(dayDate){
 
   var now      = new Date();
   var isToday  = (dayDate.toDateString() === now.toDateString());
+  var isUnconf = !!dayDate._unconfirmed;
   var slots    = [];
-  var OPEN_H   = jadwal.open;   // jam buka, misal 10
-  var CLOSE_H  = jadwal.close;  // jam tutup, misal 18
-
-  // --- nowMins: menit sejak tengah malam untuk "sekarang" ---
+  var OPEN_H   = jadwal.open;
+  var CLOSE_H  = jadwal.close;
   var nowMins  = isToday ? (now.getHours() * 60 + now.getMinutes()) : -1;
 
-  // ---- SLOT 1: Express "< 30 menit" ----
-  // Muncul mulai 1 menit sebelum jam buka (OPEN_H:00 - 1 menit)
-  var expressOpenMins  = OPEN_H * 60 - 1;  // misal 10*60-1 = 599 = 09:59
-  // Express tutup saat nowMins >= slot reguler pertama - 30 menit
-  // Slot reguler pertama = OPEN_H:30 = OPEN_H*60 + 30
-  // Jadi express tutup di nowMins >= OPEN_H*60  (30 menit sebelum OPEN_H:30)
-  var expressCloseMins = OPEN_H * 60;       // misal 10*60 = 600 = 10:00
+  var openMins  = OPEN_H  * 60;
+  var closeMins = CLOSE_H * 60;
 
-  // Khusus: blok express sore (max order 17:30, pickup sebelum 18:00)
-  // Jika nowMins antara 17:30 (1050) dan 18:00 (1080) dan tutup jam 18
-  var isLastCallExpress = isToday && (CLOSE_H === 18)
-                          && (nowMins >= 1050) && (nowMins < 1080);
-
-  var expressDisabled = false;
-  if(!isToday){
-    expressDisabled = true;  // express tidak berlaku untuk hari besok
-  } else if(isLastCallExpress){
-    expressDisabled = false; // tetap bisa, ini slot last call
-  } else if(nowMins < expressOpenMins){
-    expressDisabled = true;  // terlalu pagi, toko belum mau buka
-  } else if(nowMins >= expressCloseMins){
-    expressDisabled = true;  // sudah terlalu siang, lewat window express
+  // Cek apakah express aktif untuk checkpoint tertentu (dalam menit)
+  // Window: [cp - 1, cp + 20]  (inklusif kedua ujung)
+  function expressActiveAt(cp){
+    if(!isToday || isUnconf) return false;
+    return (nowMins >= cp - 1) && (nowMins <= cp + 20);
   }
-  slots.push({ label: '⚡ < 30 menit', express: true, disabled: expressDisabled });
 
-  // ---- SLOT REGULER: mulai OPEN_H:30, setiap 30 menit ----
-  // Batas akhir: CLOSE_H:00 (slot terakhir = CLOSE_H-1:30 - CLOSE_H:00)
-  var startMins = OPEN_H * 60 + 30; // 10:30 = 630
-  var endMins   = CLOSE_H * 60;     // 18:00 = 1080
-
-  for(var sm = startMins; sm < endMins; sm += 30){
-    var sH = Math.floor(sm / 60);
-    var sM = sm % 60;
-    var em = sm + 30;
-    var eH = Math.floor(em / 60);
-    var eM = em % 60;
-    var label = pad(sH)+'.'+pad(sM)+' - '+pad(eH)+'.'+pad(eM);
-    var disabled = false;
-    if(isToday){
-      // Nonaktif jika waktu mulai slot < (sekarang + 30 menit)
-      var minAllowedStart = nowMins + 30;
-      if(sm < minAllowedStart) disabled = true;
-      // Tidak boleh pilih slot reguler jika nowMins sudah >= 17:30
-      // (hanya express yang masih boleh di last call)
-      if(nowMins >= 1050) disabled = true;
+  // --- Express periode awal (sebelum slot reguler pertama: OPEN_H:30) ---
+  // Checkpoint = jam buka (OPEN_H:00)
+  if(!isUnconf){
+    var expActive0 = expressActiveAt(openMins);
+    // Tampilkan hanya jika hari ini dan sedang aktif
+    if(isToday && expActive0){
+      slots.push({ label: '⚡ < 30 menit', express: true, disabled: false });
     }
-    slots.push({ label: label, express: false, disabled: disabled });
+  }
+
+  // --- Slot reguler + express per slot ---
+  for(var sm = openMins + 30; sm < closeMins; sm += 30){
+    // Express untuk slot ini, checkpoint = sm
+    if(!isUnconf){
+      var expActiveN = expressActiveAt(sm);
+      if(isToday && expActiveN){
+        slots.push({ label: '⚡ < 30 menit', express: true, disabled: false });
+      }
+    }
+
+    // Slot reguler
+    var sH = Math.floor(sm / 60), sM = sm % 60;
+    var em = sm + 30, eH = Math.floor(em / 60), eM = em % 60;
+    var regLabel = pad(sH)+'.'+pad(sM)+' - '+pad(eH)+'.'+pad(eM);
+    // Kalau hari ini dan slot sudah lewat → skip (hilangkan, tidak ditampilkan)
+    if(isToday && nowMins >= sm) continue;
+    var regDisabled = isUnconf ? true : false;
+    slots.push({ label: regLabel, express: false, disabled: regDisabled });
   }
 
   return slots;
@@ -1820,31 +2011,36 @@ function getSlots(dayDate){
 function renderJamBukaInfo(dayDate){
   var jadwal   = getJadwal(dayDate);
   var namaHari = DAYS_ID[dayDate.getDay()];
+  var tglStr   = namaHari+', '+dayDate.getDate()+' '+MONTHS_ID[dayDate.getMonth()]+' '+dayDate.getFullYear();
   var el = document.getElementById('jamBukaInfo');
   if(!el) return;
 
-  if(jadwal.tutup){
-    el.innerHTML = '🔴 <strong>Tutup</strong> — Kami libur hari ' + namaHari + '. Silakan pilih hari lain ya!';
-    el.style.background    = '#fff5f5';
-    el.style.borderColor   = '#e74c3c';
-    el.style.color         = '#b91c1c';
+  if(dayDate._unconfirmed){
+    el.innerHTML = '🟡 <strong>Jadwal belum pasti</strong> — <span style="color:#92400e;">'+tglStr+'</span> belum terkonfirmasi. Silakan tanya admin.';
+    el.style.background  = '#fffbeb';
+    el.style.borderColor = '#fbbf24';
+    el.style.color       = '#92400e';
+  } else if(jadwal.tutup){
+    el.innerHTML = '🔴 <strong>Kami tutup</strong> — <span style="color:#b91c1c;">'+tglStr+'</span>. Silakan pilih hari lain ya!';
+    el.style.background  = '#fff5f5';
+    el.style.borderColor = '#e74c3c';
+    el.style.color       = '#b91c1c';
   } else {
     var catatan = '';
     if(namaHari === 'Jumat') catatan = ' &nbsp;·&nbsp; <span style="font-weight:500;opacity:0.85">buka setelah Jumatan</span>';
-    el.innerHTML = '🟢 <strong>Buka hari ' + namaHari + '</strong>'
-                 + ' &nbsp;·&nbsp; <span style="color:#166534;">Jam ' + pad(jadwal.open) + '.00 – ' + pad(jadwal.close) + '.00</span>'
+    el.innerHTML = '🟢 <strong>Buka — '+tglStr+'</strong>'
+                 + ' &nbsp;·&nbsp; <span style="color:#166534;">Jam '+pad(jadwal.open)+'.00 – '+pad(jadwal.close)+'.00</span>'
                  + catatan
                  + ' &nbsp;·&nbsp; <span style="color:#92400e;font-size:0.9em;">⏰ max order online 17.30</span>';
-    el.style.background    = '#f0fdf4';
-    el.style.borderColor   = '#27ae60';
-    el.style.color         = '#14532d';
+    el.style.background  = '#f0fdf4';
+    el.style.borderColor = '#27ae60';
+    el.style.color       = '#14532d';
   }
 }
 
 function buildDayRow(){
   var days = getDays();
   var now  = new Date();
-  // Pilih default ke hari yang masih punya slot
   var defaultDay = 0;
   var todayJadwal = getJadwal(days[0]);
   var todayClose  = todayJadwal.close || 18;
@@ -1854,18 +2050,24 @@ function buildDayRow(){
   var html = '';
   days.forEach(function(d, i){
     var jadwal   = getJadwal(d);
-    var dayLabel = i===0 ? 'Hari Ini' : 'Besok';
+    var dayLabel = i===0 ? 'Hari Ini' : (i===1 ? 'Besok' : DAYS_ID[d.getDay()]);
     var dateStr  = d.getDate()+' '+MONTHS_ID[d.getMonth()];
     var tutupTag = jadwal.tutup ? ' <span style="font-size:0.75em;color:#e74c3c;">Tutup</span>' : '';
-    html += '<button class="day-btn'+(i===defaultDay?' active':'')+'" onclick="selectDay('+i+',this)">'
-          + '<span class="day-name">'+dayLabel+tutupTag+'</span>'
+    var unconfTag = d._unconfirmed ? ' <span style="font-size:0.7em;color:#f59e0b;">?</span>' : '';
+    var extraClass = d._unconfirmed ? ' day-unconfirmed' : '';
+    html += '<button class="day-btn'+(i===defaultDay?' active':'')+extraClass+'" onclick="selectDay('+i+',this)">'
+          + '<span class="day-name">'+dayLabel+tutupTag+unconfTag+'</span>'
           + '<span class="day-date">'+DAYS_ID[d.getDay()]+', '+dateStr+'</span>'
           + '</button>';
   });
-  document.getElementById('dayRow').innerHTML = html;
+  var row = document.getElementById('dayRow');
+  row.innerHTML = html;
+  // Scroll ke posisi awal agar hanya 2 tombol pertama kelihatan
+  row.scrollLeft = 0;
   selectedDay = defaultDay;
   renderJamBukaInfo(days[defaultDay]);
   buildTimeSlots(defaultDay);
+  updateMenuLock(days[defaultDay]);
 }
 
 function selectDay(idx, btn){
@@ -1876,24 +2078,57 @@ function selectDay(idx, btn){
   var days = getDays();
   renderJamBukaInfo(days[idx]);
   buildTimeSlots(idx);
+  updateMenuLock(days[idx]);
 }
 
 function buildTimeSlots(idx){
-  var days   = getDays();
-  var jadwal = getJadwal(days[idx]);
-  var slots  = getSlots(days[idx]);
-  var hasAvail = slots.some(function(s){ return !s.disabled; });
+  var days    = getDays();
+  var dayDate = days[idx];
+  var jadwal  = getJadwal(dayDate);
+  var isUnconf = !!dayDate._unconfirmed;
+  var slots   = getSlots(dayDate);
+  var hasAvailReg = slots.some(function(s){ return !s.express && !s.disabled; });
   var html = '';
+
   if(jadwal.tutup){
     html = '<div class="no-slots-msg">🔴 Kami tutup hari ini. Silakan pilih hari lain ya!</div>';
-  } else if(!hasAvail){
-    html = '<div class="no-slots-msg">Tidak ada slot tersedia. Pilih besok ya!</div>';
+  } else if(isUnconf){
+    var tgl = dayDate.getDate()+' '+MONTHS_ID[dayDate.getMonth()]+' '+dayDate.getFullYear();
+    var namaHari = DAYS_ID[dayDate.getDay()];
+    var waText = encodeURIComponent(
+      'Halo Renjana! 😊\n'
+      +'Saya ingin menanyakan apakah pada hari *'+namaHari+', '+tgl+'* Renjana buka?\n'
+      +'Dan apakah bisa menerima pesanan online pada hari tersebut?\n\n'
+      +'Terima kasih 🙏'
+    );
+    html = '<div class="unconfirmed-notice">'
+         +'<div class="unconfirmed-notice-text">'
+         +'⚠️ <strong>Jadwal hari ini belum bisa dipastikan.</strong><br>'
+         +'Silakan konfirmasi ke admin dulu apakah Renjana buka dan menerima pesanan pada <strong>'+namaHari+', '+tgl+'</strong>.'
+         +'</div>'
+         +'<a href="https://wa.me/6281226931785?text='+waText+'" target="_blank" class="btn-tanya-admin">'
+         +'<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>'
+         +'Tanya Admin via WhatsApp'
+         +'</a>'
+         +'</div>';
+  } else if(slots.length === 0){
+    var isToday2 = (dayDate.toDateString() === new Date().toDateString());
+    html = '<div class="no-slots-msg">'+(isToday2 ? '⏰ Semua slot hari ini sudah lewat. Pilih hari besok ya!' : 'Tidak ada slot tersedia. Pilih hari lain ya!')+'</div>';
   } else {
     slots.forEach(function(s){
-      if(s.disabled) return;
-      var extraClass = s.express ? ' time-btn-express' : '';
-      html += '<button class="time-btn'+extraClass+'" onclick="selectSlot(\''+s.label+'\',this)">'+s.label+'</button>';
+      if(s.express){
+        // Express hanya tampil kalau aktif (sudah difilter di getSlots)
+        html += '<button class="time-btn time-btn-express" onclick="selectSlot(\''+s.label+'\',this)">'+s.label+'</button>';
+      } else {
+        // Slot reguler: tampil semua, disabled = abu-abu tidak bisa diklik
+        if(s.disabled){
+          html += '<button class="time-btn" disabled style="opacity:0.3;cursor:not-allowed;">'+s.label+'</button>';
+        } else {
+          html += '<button class="time-btn" onclick="selectSlot(\''+s.label+'\',this)">'+s.label+'</button>';
+        }
+      }
     });
+    if(html === '') html = '<div class="no-slots-msg">Tidak ada slot tersedia. Pilih hari lain ya!</div>';
   }
   document.getElementById('timeSlots').innerHTML = html;
 }
@@ -1908,7 +2143,7 @@ function getPickupLabel(){
   if(selectedSlot === null) return null;
   var days = getDays();
   var d    = days[selectedDay];
-  var dayLabel = selectedDay===0 ? 'Hari Ini' : 'Besok';
+  var dayLabel = selectedDay===0 ? 'Hari Ini' : (selectedDay===1 ? 'Besok' : DAYS_ID[d.getDay()]);
   return dayLabel+', '+DAYS_ID[d.getDay()]+' '+d.getDate()+' '+MONTHS_ID[d.getMonth()]+' - Pukul '+selectedSlot;
 }
 
@@ -1919,6 +2154,9 @@ document.addEventListener('DOMContentLoaded', function(){
   initAvailability();
   buildPopup();
   buildDayRow();
+  // Lock menu sesuai hari default
+  var days = getDays();
+  updateMenuLock(days[selectedDay]);
   var pillLinks = document.querySelectorAll('.cat-pill');
   window.addEventListener('scroll', function(){
     var cats = ['cat-coffee','cat-noncoffee','cat-tea','cat-food'];
@@ -1961,7 +2199,59 @@ function buildPopup(){
 
 function closePopup(){ document.getElementById('menuPopup').classList.remove('active'); }
 
+// ---- Menu lock: saat hari tutup atau unconfirmed ----
+var _menuLocked = false;
+var _menuLockType = ''; // 'tutup' | 'unconfirmed'
+var _menuLockDay = null;
+
+function updateMenuLock(dayDate){
+  var jadwal = getJadwal(dayDate);
+  var menuGrid = document.querySelector('.wrapper');
+  if(jadwal.tutup || dayDate._unconfirmed){
+    _menuLocked = true;
+    _menuLockType = dayDate._unconfirmed ? 'unconfirmed' : 'tutup';
+    _menuLockDay = dayDate;
+    menuGrid.classList.add('menu-locked');
+  } else {
+    _menuLocked = false;
+    _menuLockType = '';
+    _menuLockDay = null;
+    menuGrid.classList.remove('menu-locked');
+  }
+}
+
+function showMenuAlert(){
+  if(!_menuLockDay) return;
+  var namaHari = DAYS_ID[_menuLockDay.getDay()];
+  var tgl = _menuLockDay.getDate()+' '+MONTHS_ID[_menuLockDay.getMonth()]+' '+_menuLockDay.getFullYear();
+  var tglStr = namaHari+', '+tgl;
+  var waText, icon, title, body;
+  if(_menuLockType === 'tutup'){
+    icon  = '🔴';
+    title = 'Kami Sedang Libur';
+    body  = 'Renjana <strong>tutup</strong> pada <strong>'+tglStr+'</strong>.<br>Silakan pilih hari lain, atau hubungi admin untuk informasi lebih lanjut.';
+    waText = encodeURIComponent('Halo Renjana! 😊\nSaya ingin bertanya apakah ada alternatif pemesanan atau jadwal buka di '+tglStr+'?\nTerima kasih 🙏');
+  } else {
+    icon  = '🟡';
+    title = 'Jadwal Belum Pasti';
+    body  = 'Kami belum bisa memastikan apakah Renjana buka pada <strong>'+tglStr+'</strong>.<br>Silakan hubungi admin untuk konfirmasi terlebih dahulu.';
+    waText = encodeURIComponent('Halo Renjana! 😊\nSaya ingin menanyakan apakah pada hari *'+tglStr+'* Renjana buka dan bisa menerima pesanan?\nTerima kasih 🙏');
+  }
+  document.getElementById('alertIcon').textContent  = icon;
+  document.getElementById('alertTitle').textContent = title;
+  document.getElementById('alertBody').innerHTML    = body;
+  document.getElementById('alertWaBtn').href = 'https://wa.me/6281226931785?text='+waText;
+  document.getElementById('alertOverlay').classList.add('active');
+}
+
+function closeAlert(e){
+  // Tutup kalau klik overlay langsung (bukan card)
+  if(e && e.target !== document.getElementById('alertOverlay') && e.type !== 'click') return;
+  document.getElementById('alertOverlay').classList.remove('active');
+}
+
 function changeQty(i, c){
+  if(_menuLocked){ showMenuAlert(); return; }
   if(!menu[i].a) return;
   var nq = Math.max(0, ord[i].q + c);
   ord[i].q = nq;
@@ -1971,6 +2261,7 @@ function changeQty(i, c){
 }
 
 function changeSize(i, z, btn){
+  if(_menuLocked){ showMenuAlert(); return; }
   if(!menu[i].a) return;
   ord[i].z = z;
   btn.closest('.size-opts').querySelectorAll('.size-btn').forEach(function(b){ b.classList.remove('active'); });
