@@ -73,15 +73,22 @@
     gap: 10px;
   }
   .hero-logo {
-    width: 42px; height: 42px;
-    background: rgba(255,255,255,0.2);
-    border-radius: 12px;
+    width: 48px; height: 48px;
+    background: rgba(255,255,255,0.18);
+    border-radius: 14px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.4em;
     backdrop-filter: blur(8px);
     border: 1px solid rgba(255,255,255,0.3);
+    overflow: hidden;
+    padding: 4px;
+  }
+  .hero-logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
   }
   .hero-brand-text { color: #fff; }
   .hero-brand-text h1 {
@@ -481,7 +488,8 @@
     font-size: 2.2em;
     flex-shrink: 0;
     overflow: hidden;
-    background: #111;
+    background: #ffffff;
+    border: 1px solid var(--border);
   }
   .item-img-inner img {
     width: 100%;
@@ -1152,6 +1160,162 @@
   .menu-locked .size-btn { pointer-events: none; opacity: 0.3; }
   .menu-locked .menu-item { cursor: pointer; }
   .menu-locked .menu-item:hover { background: #fafafa; }
+
+  /* ===== WELCOME POPUP ===== */
+  .welcome-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(6px);
+    z-index: 999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    animation: fadeIn 0.4s ease;
+  }
+  .welcome-overlay.hiding {
+    animation: fadeOut 0.5s ease forwards;
+  }
+  @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+  @keyframes fadeOut { from { opacity:1; } to { opacity:0; } }
+
+  .welcome-card {
+    background: linear-gradient(145deg, #fff 0%, #fff8f6 100%);
+    border-radius: 28px;
+    padding: 40px 32px 36px;
+    max-width: 320px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 24px 60px rgba(232,71,42,0.25), 0 8px 24px rgba(0,0,0,0.12);
+    animation: popIn 0.45s cubic-bezier(.22,1,.36,1);
+    position: relative;
+    overflow: hidden;
+  }
+  .welcome-card::before {
+    content: '';
+    position: absolute;
+    top: -50px; right: -50px;
+    width: 160px; height: 160px;
+    background: radial-gradient(circle, rgba(232,71,42,0.08) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+  .welcome-card::after {
+    content: '';
+    position: absolute;
+    bottom: -40px; left: -40px;
+    width: 120px; height: 120px;
+    background: radial-gradient(circle, rgba(255,149,0,0.08) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+
+  /* Logo wrapper besar di popup */
+  .welcome-logo-wrap {
+    position: relative;
+    z-index: 2;
+    margin: 0 auto 20px;
+    width: 100px; height: 100px;
+  }
+  /* Logo yg di-animasikan ke header */
+  .welcome-logo-anim {
+    width: 100px; height: 100px;
+    border-radius: 24px;
+    background: linear-gradient(135deg, #e8472a, #ff9500);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 8px 28px rgba(232,71,42,0.4);
+    overflow: hidden;
+    padding: 8px;
+    transition: none;
+  }
+  .welcome-logo-anim img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+  }
+  .welcome-logo-anim.flying {
+    position: fixed;
+    z-index: 1000;
+    transition: all 0.55s cubic-bezier(.22,1,.36,1);
+    pointer-events: none;
+  }
+
+  .welcome-tagline {
+    font-size: 0.72em;
+    font-weight: 600;
+    color: var(--primary);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    opacity: 0.8;
+  }
+  .welcome-title {
+    font-family: 'Nunito', sans-serif;
+    font-size: 1.7em;
+    font-weight: 900;
+    color: var(--text);
+    line-height: 1.2;
+    margin-bottom: 10px;
+  }
+  .welcome-title span { color: var(--primary); }
+  .welcome-desc {
+    font-size: 0.83em;
+    color: var(--text-secondary);
+    line-height: 1.7;
+    margin-bottom: 28px;
+    position: relative; z-index: 2;
+  }
+  .welcome-timer-bar {
+    width: 100%;
+    height: 3px;
+    background: var(--border);
+    border-radius: 2px;
+    margin-bottom: 20px;
+    overflow: hidden;
+    position: relative; z-index: 2;
+  }
+  .welcome-timer-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary), var(--accent));
+    border-radius: 2px;
+    width: 100%;
+    animation: timerShrink 4s linear forwards;
+  }
+  @keyframes timerShrink { from { width: 100%; } to { width: 0%; } }
+  .welcome-btn {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    color: #fff;
+    border: none;
+    border-radius: 14px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.92em;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 6px 18px rgba(232,71,42,0.35);
+    position: relative; z-index: 2;
+    letter-spacing: 0.3px;
+  }
+  .welcome-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(232,71,42,0.45); }
+  .welcome-hint {
+    font-size: 0.68em;
+    color: var(--text-muted);
+    margin-top: 10px;
+    position: relative; z-index: 2;
+  }
+
+  /* Sembunyikan logo di header saat popup tampil */
+  .hero-logo.hidden-for-popup {
+    opacity: 0;
+    transform: scale(0.5);
+    transition: opacity 0.3s, transform 0.3s;
+  }
+  .hero-logo {
+    transition: opacity 0.4s 0.1s, transform 0.4s 0.1s;
+  }
 </style>
 </head>
 <body>
@@ -1162,7 +1326,7 @@
   <div class="hero">
     <div class="hero-top">
       <div class="hero-brand">
-        <div class="hero-logo">☕</div>
+        <div class="hero-logo hidden-for-popup" id="heroLogo"><img src="img/logo.png" alt="Renjana"></div>
         <div class="hero-brand-text">
           <h1>Renjana</h1>
           <p>Menu Digital · Pesan Mudah</p>
@@ -1818,8 +1982,28 @@
   </div>
 </div>
 
+<!-- WELCOME POPUP -->
+<div class="welcome-overlay" id="welcomeOverlay" onclick="closeWelcomePopup()">
+  <div class="welcome-card" onclick="event.stopPropagation()">
+    <div class="welcome-logo-wrap">
+      <div class="welcome-logo-anim" id="welcomeLogoAnim">
+        <img src="img/logo.png" alt="Renjana Coffee">
+      </div>
+    </div>
+    <div class="welcome-tagline">☕ Selamat Datang</div>
+    <div class="welcome-title">di <span>Renjana</span><br>Coffee</div>
+    <div class="welcome-desc">
+      Nikmati kopi pilihan terbaik dan menu lezat kami.<br>
+      Pesan mudah, langsung via WhatsApp! 🚀
+    </div>
+    <div class="welcome-timer-bar"><div class="welcome-timer-fill" id="welcomeTimerFill"></div></div>
+    <button class="welcome-btn" onclick="closeWelcomePopup()">Lihat Menu Sekarang →</button>
+    <div class="welcome-hint">Akan tertutup otomatis dalam beberapa detik · atau klik di mana saja</div>
+  </div>
+</div>
+
 <!-- POPUP MENU HARI INI -->
-<div class="overlay active" id="menuPopup">
+<div class="overlay" id="menuPopup">
   <div class="sheet">
     <div class="sheet-handle"></div>
     <div class="sheet-title">Menu Hari Ini</div>
@@ -1905,7 +2089,7 @@ var JAM_BUKA = {
   'Rabu'    : { open: 10, close: 18, tutup: false },
   'Kamis'   : { open: 10, close: 18, tutup: false },
   'Jumat'   : { open: 13, close: 18, tutup: false },  // ← buka siang setelah Jumatan
-  'Sabtu'   : { open: 10, close: 18, tutup: true }
+  'Sabtu'   : { open: 10, close: 18, tutup: false }
 };
 // ================================================================
 
@@ -2405,6 +2589,72 @@ function closePay(){
 function closeSuccess(){
   document.getElementById('successOverlay').classList.remove('active');
 }
+
+/* ===== WELCOME POPUP LOGIC ===== */
+(function(){
+  var overlay = document.getElementById('welcomeOverlay');
+  var logoAnim = document.getElementById('welcomeLogoAnim');
+  var heroLogo = document.getElementById('heroLogo');
+  var closed = false;
+
+  function getHeroLogoRect(){
+    return heroLogo.getBoundingClientRect();
+  }
+
+  function doFlyAnimation(){
+    if(closed) return;
+    closed = true;
+
+    // Posisi saat ini dari logo popup
+    var fromRect = logoAnim.getBoundingClientRect();
+
+    // Jadikan logo bebas dari flow (fixed), posisi sama persis dulu
+    logoAnim.classList.add('flying');
+    logoAnim.style.left = fromRect.left + 'px';
+    logoAnim.style.top  = fromRect.top  + 'px';
+    logoAnim.style.width  = fromRect.width  + 'px';
+    logoAnim.style.height = fromRect.height + 'px';
+    logoAnim.style.borderRadius = '24px';
+
+    // Fade out overlay (tapi logo tetap tampak karena fixed di atas)
+    overlay.classList.add('hiding');
+
+    // Tunggu sebentar baru terbang ke tujuan
+    setTimeout(function(){
+      var toRect = getHeroLogoRect();
+      logoAnim.style.left   = toRect.left   + 'px';
+      logoAnim.style.top    = toRect.top    + 'px';
+      logoAnim.style.width  = toRect.width  + 'px';
+      logoAnim.style.height = toRect.height + 'px';
+      logoAnim.style.borderRadius = '14px';
+      logoAnim.style.boxShadow = 'none';
+      logoAnim.style.background = 'rgba(255,255,255,0.18)';
+      logoAnim.style.padding = '4px';
+    }, 60);
+
+    // Setelah animasi terbang selesai, tampilkan logo asli dan hapus logo animasi
+    setTimeout(function(){
+      heroLogo.classList.remove('hidden-for-popup');
+      setTimeout(function(){
+        if(logoAnim.parentNode) logoAnim.parentNode.removeChild(logoAnim);
+        if(overlay.parentNode) overlay.parentNode.removeChild(overlay);
+      }, 300);
+    }, 620);
+  }
+
+  function closeWelcomePopup(){
+    if(closed) return;
+    doFlyAnimation();
+  }
+
+  // Expose globally
+  window.closeWelcomePopup = closeWelcomePopup;
+
+  // Auto-close setelah 4 detik
+  setTimeout(function(){
+    if(!closed) closeWelcomePopup();
+  }, 4000);
+})();
 </script>
 </body>
 </html>
